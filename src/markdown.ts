@@ -62,11 +62,20 @@ marked.use({
 
 let previewCache: { content: string; html: string } | null = null;
 
+/** プレビュー用: 先頭 YAML フロントマターを除去（編集バッファは触らない） */
+export function stripFrontMatter(md: string): string {
+  if (!md.startsWith("---\n")) return md;
+  const end = md.indexOf("\n---\n", 4);
+  if (end === -1) return md;
+  return md.slice(end + 5);
+}
+
 export function renderMarkdownToHtml(content: string): string {
+  const forPreview = stripFrontMatter(content);
   if (previewCache?.content === content) {
     return previewCache.html;
   }
-  const html = marked.parse(content) as string;
+  const html = marked.parse(forPreview) as string;
   previewCache = { content, html };
   return html;
 }

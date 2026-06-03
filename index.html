@@ -21,6 +21,9 @@
         <button type="button" id="btn-open" aria-label="ファイルを開く">
           開く
         </button>
+        <button type="button" id="btn-save-as" aria-label="別名で保存">
+          別名で保存
+        </button>
         <button type="button" id="btn-toggle-view" aria-label="編集とプレビューを切り替え">
           プレビュー
         </button>
@@ -38,6 +41,7 @@
         <aside id="app-sidebar" class="sidebar" aria-label="ファイル一覧">
           <div class="sidebar-header">
             <button type="button" id="btn-open-folder">フォルダを開く</button>
+            <button type="button" id="btn-new-file" disabled>新規</button>
             <button
               type="button"
               id="btn-refresh-tree"
@@ -51,13 +55,29 @@
           <p id="workspace-root-label" class="workspace-root-label">
             作業フォルダ未選択
           </p>
-          <input
-            id="sidebar-filter"
-            class="sidebar-filter"
-            type="search"
-            placeholder="ファイル名で絞り込み"
-            autocomplete="off"
-          />
+          <section class="recent-files" aria-label="最近開いたファイル">
+            <h3 class="sidebar-section-title">最近</h3>
+            <div id="recent-files-list" class="recent-files-list"></div>
+          </section>
+          <div class="sidebar-search-row">
+            <input
+              id="sidebar-filter"
+              class="sidebar-filter"
+              type="search"
+              placeholder="ファイル名で絞り込み"
+              autocomplete="off"
+            />
+            <button
+              type="button"
+              id="btn-search-files"
+              class="sidebar-icon-btn"
+              title="作業フォルダ内を検索"
+              aria-label="作業フォルダ内を検索"
+            >
+              検索
+            </button>
+          </div>
+          <div id="search-results" class="search-results" hidden></div>
           <nav id="file-tree" class="file-tree"></nav>
         </aside>
 
@@ -86,6 +106,7 @@
           </main>
 
           <footer class="statusbar" aria-live="polite">
+            <span id="file-path" class="file-path" hidden></span>
             <span id="save-status" class="save-status save-status--saved"
               >保存済み</span
             >
@@ -154,6 +175,18 @@
               ></output>
             </label>
             <input id="setting-preview-size" type="range" step="1" />
+          </div>
+          <div class="settings-row settings-row--checkbox">
+            <label>
+              <input id="setting-editor-light" type="checkbox" />
+              エディタを常にライト表示
+            </label>
+          </div>
+          <div class="settings-row settings-row--checkbox">
+            <label>
+              <input id="setting-file-watch" type="checkbox" />
+              作業フォルダの変更を自動反映（ファイル監視）
+            </label>
           </div>
         </div>
         <footer class="settings-footer">

@@ -14,6 +14,8 @@ export interface DisplaySettings {
   previewFontFamily: string;
   editorFontSize: number;
   previewFontSize: number;
+  editorLightMode: boolean;
+  fileWatchEnabled: boolean;
 }
 
 export const DEFAULT_DISPLAY_SETTINGS: DisplaySettings = {
@@ -21,7 +23,30 @@ export const DEFAULT_DISPLAY_SETTINGS: DisplaySettings = {
   previewFontFamily: SYSTEM_UI_FAMILY,
   editorFontSize: 15,
   previewFontSize: 18,
+  editorLightMode: false,
+  fileWatchEnabled: false,
 };
+
+let fileWatchListeners: Array<() => void> = [];
+
+export function getFileWatchEnabled(): boolean {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return false;
+    const data = JSON.parse(raw) as Partial<DisplaySettings>;
+    return Boolean(data.fileWatchEnabled);
+  } catch {
+    return false;
+  }
+}
+
+export function onFileWatchSettingChange(listener: () => void): void {
+  fileWatchListeners.push(listener);
+}
+
+function notifyFileWatchChange(): void {
+  for (const fn of fileWatchListeners) fn();
+}
 
 const EDITOR_SIZE_MIN = 10;
 const EDITOR_SIZE_MAX = 32;
@@ -56,6 +81,8 @@ function normalize(
       PREVIEW_SIZE_MIN,
       PREVIEW_SIZE_MAX,
     ),
+    editorLightMode: Boolean(settings.editorLightMode),
+    fileWatchEnabled: Boolean(settings.fileWatchEnabled),
   };
 }
 
@@ -105,6 +132,7 @@ export function applyDisplaySettings(settings: DisplaySettings): void {
     fontFamilyToCss(settings.previewFontFamily, "preview"),
   );
   root.style.setProperty("--preview-font-size", `${settings.previewFontSize}px`);
+  root.classList.toggle("editor-light", settings.editorLightMode);
 }
 
 async function fetchSystemFonts(): Promise<{
@@ -197,6 +225,12 @@ export function initDisplaySettings(): void {
   const btnReset = document.querySelector(
     "#btn-settings-reset",
   ) as HTMLButtonElement;
+  const editorLightCheckbox = document.querySelector(
+    "#setting-editor-light",
+  ) as HTMLInputElement;
+  const fileWatchCheckbox = document.querySelector(
+    "#setting-file-watch",
+  ) as HTMLInputElement;
   const fontsStatus = document.querySelector(
     "#settings-fonts-status",
   ) as HTMLElement;
@@ -229,9 +263,12 @@ export function initDisplaySettings(): void {
       previewFontFilter.value,
       current.previewFontFamily,
     );
+    editorLightCheckbox.checked = current.editorLightMode;
+    fileWatchCheckbox.checked = current.fileWatchEnabled;
   };
 
   const commit = (partial: Partial<DisplaySettings>) => {
+    const prevWatch = current.fileWatchEnabled;
     current = normalize(
       { ...current, ...partial },
       editorFamilies,
@@ -240,6 +277,9 @@ export function initDisplaySettings(): void {
     applyDisplaySettings(current);
     saveDisplaySettings(current);
     syncControls();
+    if (prevWatch !== current.fileWatchEnabled) {
+      notifyFileWatchChange();
+    }
   };
 
   const ensureFonts = async () => {
@@ -319,6 +359,13 @@ export function initDisplaySettings(): void {
     commit({ previewFontSize: Number(previewSizeInput.value) });
   });
 
+  editorLightCheckbox.addEventListener("change", () => {
+    commit({ editorLightMode: editorLightCheckbox.checked });
+  });
+  fileWatchCheckbox.addEventListener("change", () => {
+    commit({ fileWatchEnabled: fileWatchCheckbox.checked });
+  });
+
   btnReset.addEventListener("click", () => {
     current = normalize(
       { ...DEFAULT_DISPLAY_SETTINGS },
@@ -330,5 +377,6 @@ export function initDisplaySettings(): void {
     editorFontFilter.value = "";
     previewFontFilter.value = "";
     syncControls();
+    notifyFileWatchChange();
   });
 }

@@ -603,12 +603,108 @@ body {
   accent-color: #0031d8;
 }
 
+.sidebar-section-title {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #737373;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.recent-files {
+  padding: 0 0.5rem 0.5rem;
+  flex-shrink: 0;
+}
+
+.recent-files-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  max-height: 8rem;
+  overflow-y: auto;
+}
+
+.recent-file-btn,
+.search-result-btn {
+  display: block;
+  width: 100%;
+  padding: 0.3rem 0.4rem;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  text-align: left;
+  font-size: 0.8125rem;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recent-file-btn:hover,
+.search-result-btn:hover {
+  background: rgb(0 0 0 / 0.06);
+}
+
+.recent-file-btn--active {
+  background: rgb(0 49 216 / 0.1);
+  font-weight: 600;
+}
+
+.recent-empty {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #a3a3a3;
+}
+
+.sidebar-search-row {
+  display: flex;
+  gap: 0.35rem;
+  padding: 0 0.5rem 0.5rem;
+  flex-shrink: 0;
+}
+
+.sidebar-search-row .sidebar-filter {
+  flex: 1;
+  min-width: 0;
+}
+
+.search-results {
+  padding: 0 0.5rem 0.5rem;
+  max-height: 10rem;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.search-results-heading {
+  margin: 0 0 0.25rem;
+  font-size: 0.75rem;
+  color: #737373;
+}
+
 .statusbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   padding: 0.35rem 0.75rem;
   font-size: 0.8125rem;
   border-top: 1px solid var(--border);
   background: var(--toolbar-bg);
   flex-shrink: 0;
+}
+
+.file-path {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: #737373;
+}
+
+.save-status {
+  flex-shrink: 0;
+  margin-left: auto;
 }
 
 .save-status--saved::before {
@@ -676,6 +772,11 @@ body {
     color: inherit;
   }
 
+  .recent-file-btn:hover,
+  .search-result-btn:hover {
+    background: rgb(255 255 255 / 0.08);
+  }
+
   /* Preview stays light (DADS) for readable Markdown rendering */
   .preview {
     color: #1a1a1a;
@@ -739,5 +840,19 @@ body {
 
   .preview hr {
     border-top-color: #e6e6e6;
+  }
+}
+
+/* C3: エディタ常時ライト（設定 ON 時、ダークモードより優先） */
+:root.editor-light .editor {
+  background: #ffffff;
+  color: #1a1a1a;
+  caret-color: #1a1a1a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root.editor-light .editor {
+    background: #ffffff;
+    color: #1a1a1a;
   }
 }

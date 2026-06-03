@@ -21,14 +21,14 @@ const SKIP_DIR_NAMES: &[&str] = &[
 
 const MARKDOWN_EXTENSIONS: &[&str] = &["md", "markdown", "mdown", "mkd", "txt"];
 
-fn should_skip_dir(name: &str) -> bool {
+pub fn should_skip_dir(name: &str) -> bool {
     if name.starts_with('.') {
         return name != ".";
     }
     SKIP_DIR_NAMES.contains(&name)
 }
 
-fn is_markdown_file(path: &Path) -> bool {
+pub fn is_markdown_file(path: &Path) -> bool {
     path.extension()
         .map(|e| {
             let ext = e.to_string_lossy().to_lowercase();

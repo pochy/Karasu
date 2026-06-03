@@ -1,6 +1,8 @@
 use crate::dir::{self, DirEntry};
 use crate::fonts;
 use crate::recent;
+use crate::search;
+use crate::watch;
 use crate::workspace;
 use serde::Serialize;
 use std::path::Path;
@@ -65,6 +67,25 @@ pub fn write_file(app: AppHandle, path: String, content: String) -> Result<(), S
 #[tauri::command]
 pub fn get_recent_path(app: AppHandle) -> Option<String> {
     recent::load_recent(&app)
+}
+
+#[tauri::command]
+pub fn get_recent_paths(app: AppHandle) -> Vec<String> {
+    recent::load_recent_paths(&app)
+}
+
+#[tauri::command]
+pub fn search_filenames(root: String, query: String) -> Result<Vec<DirEntry>, String> {
+    search::search_filenames(Path::new(&root), &query)
+}
+
+#[tauri::command]
+pub fn set_workspace_watch(
+    app: AppHandle,
+    enabled: bool,
+    path: Option<String>,
+) -> Result<(), String> {
+    watch::set_workspace_watch(&app, enabled, path)
 }
 
 #[tauri::command]
