@@ -13,6 +13,10 @@
   --status-unsaved: #b45309;
   --status-saved: #166534;
   --preview-max-width: 860px;
+  --editor-font-family: Menlo, Monaco, "Courier New", monospace;
+  --editor-font-size: 15px;
+  --preview-font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --preview-font-size: 18px;
 }
 
 *,
@@ -32,6 +36,156 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
+}
+
+.workspace {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.workspace.sidebar-hidden .sidebar {
+  display: none;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 15rem;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+  background: var(--toolbar-bg);
+  min-height: 0;
+}
+
+.sidebar-header {
+  display: flex;
+  gap: 0.35rem;
+  padding: 0.5rem;
+  flex-shrink: 0;
+}
+
+.sidebar-header #btn-open-folder {
+  flex: 1;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.8125rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.sidebar-header #btn-open-folder:hover {
+  border-color: var(--accent);
+}
+
+.sidebar-icon-btn {
+  width: 2rem;
+  padding: 0.35rem 0;
+  font-size: 1rem;
+  line-height: 1;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.sidebar-icon-btn:hover {
+  border-color: var(--accent);
+}
+
+.workspace-root-label {
+  margin: 0;
+  padding: 0 0.5rem 0.35rem;
+  font-size: 0.75rem;
+  color: #525252;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-filter {
+  margin: 0 0.5rem 0.5rem;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.8125rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.file-tree {
+  flex: 1;
+  overflow: auto;
+  padding: 0 0.25rem 0.5rem;
+  min-height: 0;
+}
+
+.tree-hint,
+.tree-empty,
+.tree-error {
+  margin: 0.5rem;
+  font-size: 0.75rem;
+  color: #525252;
+  line-height: 1.4;
+}
+
+.tree-error {
+  color: var(--error-text);
+}
+
+.tree-node--filtered {
+  display: none;
+}
+
+.tree-node-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  width: 100%;
+  padding: 0.2rem 0.35rem;
+  font-size: 0.8125rem;
+  text-align: left;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  color: inherit;
+}
+
+.tree-node-btn:hover {
+  background: rgb(0 0 0 / 0.06);
+}
+
+.tree-node-btn--active {
+  background: rgb(37 99 235 / 0.12);
+  font-weight: 600;
+}
+
+.tree-chevron {
+  display: inline-block;
+  width: 0.75rem;
+  font-size: 0.625rem;
+  color: #737373;
+  flex-shrink: 0;
+}
+
+.tree-chevron--spacer {
+  visibility: hidden;
+}
+
+.tree-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.main-pane {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
 }
 
 .toolbar {
@@ -60,6 +214,144 @@ body {
 .toolbar button:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+.settings-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgb(0 0 0 / 0.4);
+}
+
+.settings-overlay[hidden] {
+  display: none;
+}
+
+.settings-dialog {
+  width: min(100%, 22rem);
+  max-height: min(90vh, 36rem);
+  overflow: auto;
+  background: #fff;
+  color: #1a1a1a;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 12px 40px rgb(0 0 0 / 0.18);
+}
+
+.settings-dialog:focus {
+  outline: none;
+}
+
+.settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.settings-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.settings-close {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  font-size: 1.25rem;
+  line-height: 1;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  color: inherit;
+}
+
+.settings-close:hover {
+  background: var(--toolbar-bg);
+  border-color: var(--border);
+}
+
+.settings-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  padding: 1rem;
+}
+
+.settings-fonts-status {
+  margin: 0;
+  font-size: 0.75rem;
+  color: #525252;
+  line-height: 1.4;
+}
+
+.settings-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.settings-row label {
+  font-size: 0.8125rem;
+  color: #525252;
+}
+
+.settings-row output {
+  margin-left: 0.35rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.settings-row select,
+.settings-row input[type="range"] {
+  width: 100%;
+  font-size: 0.875rem;
+}
+
+.settings-row input[type="search"] {
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+}
+
+.settings-row select {
+  padding: 0.25rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+}
+
+.settings-row select[size] {
+  min-height: 8.5rem;
+}
+
+.settings-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.settings-reset {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8125rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.settings-reset:hover {
+  border-color: var(--accent);
 }
 
 .file-name {
@@ -94,8 +386,8 @@ body {
   resize: none;
   border: none;
   padding: 1rem 1.25rem;
-  font-family: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, monospace;
-  font-size: 0.9375rem;
+  font-family: var(--editor-font-family);
+  font-size: var(--editor-font-size);
   line-height: 1.65;
   background: #fff;
   color: inherit;
@@ -114,12 +406,8 @@ body {
   max-width: var(--preview-max-width);
   margin: 0 auto;
   padding: 2rem;
-  font-family:
-    "Noto Sans JP",
-    -apple-system,
-    BlinkMacSystemFont,
-    sans-serif;
-  font-size: 1.125rem;
+  font-family: var(--preview-font-family);
+  font-size: var(--preview-font-size);
   font-weight: 400;
   line-height: 1.7;
   letter-spacing: 0.02em;
@@ -144,7 +432,7 @@ body {
 }
 
 .preview h1 {
-  font-size: 2.375rem;
+  font-size: 2.111em;
   line-height: 1.4;
   letter-spacing: 0.01em;
   padding-bottom: 0.3em;
@@ -152,7 +440,7 @@ body {
 }
 
 .preview h2 {
-  font-size: 1.875rem;
+  font-size: 1.667em;
   line-height: 1.5;
   letter-spacing: 0.01em;
   padding-bottom: 0.25em;
@@ -160,25 +448,25 @@ body {
 }
 
 .preview h3 {
-  font-size: 1.625rem;
+  font-size: 1.444em;
   line-height: 1.5;
   letter-spacing: 0.02em;
 }
 
 .preview h4 {
-  font-size: 1.375rem;
+  font-size: 1.222em;
   line-height: 1.6;
   letter-spacing: 0.02em;
 }
 
 .preview h5 {
-  font-size: 1.25rem;
+  font-size: 1.111em;
   line-height: 1.6;
   letter-spacing: 0.02em;
 }
 
 .preview h6 {
-  font-size: 1.125rem;
+  font-size: 1em;
   line-height: 1.7;
   letter-spacing: 0.02em;
   color: #4d4d4d;
@@ -233,8 +521,8 @@ body {
 }
 
 .preview code {
-  font-family: "Noto Sans Mono", ui-monospace, Menlo, monospace;
-  font-size: 0.875rem;
+  font-family: Menlo, Monaco, "Courier New", monospace;
+  font-size: 0.778em;
   line-height: 1.5;
   padding: 0.125rem 0.375rem;
   background-color: #f2f2f2;
@@ -278,7 +566,7 @@ body {
   border-collapse: collapse;
   margin-top: 0;
   margin-bottom: 1rem;
-  font-size: 1rem;
+  font-size: 0.889em;
   line-height: 1.5;
 }
 
@@ -351,7 +639,39 @@ body {
   }
 
   .toolbar button,
-  .editor {
+  .editor,
+  .sidebar-header #btn-open-folder,
+  .sidebar-icon-btn,
+  .sidebar-filter {
+    background: #1f1f1f;
+    color: inherit;
+  }
+
+  .tree-node-btn:hover {
+    background: rgb(255 255 255 / 0.08);
+  }
+
+  .tree-node-btn--active {
+    background: rgb(96 165 250 / 0.2);
+  }
+
+  .settings-dialog {
+    background: #262626;
+    color: #e5e5e5;
+  }
+
+  .settings-row label {
+    color: #a3a3a3;
+  }
+
+  .settings-fonts-status {
+    color: #a3a3a3;
+  }
+
+  .settings-row input[type="search"],
+  .settings-row select,
+  .settings-reset,
+  .settings-close:hover {
     background: #1f1f1f;
     color: inherit;
   }

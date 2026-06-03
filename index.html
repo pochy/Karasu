@@ -2,12 +2,6 @@
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&family=Noto+Sans+Mono:wght@400&display=swap"
-      rel="stylesheet"
-    />
     <link rel="stylesheet" href="/src/styles.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Karasu</title>
@@ -16,43 +10,158 @@
   <body>
     <div id="app" class="app">
       <header class="toolbar" role="toolbar" aria-label="メインツールバー">
+        <button
+          type="button"
+          id="btn-toggle-sidebar"
+          aria-expanded="false"
+          aria-controls="app-sidebar"
+        >
+          一覧
+        </button>
         <button type="button" id="btn-open" aria-label="ファイルを開く">
           開く
         </button>
         <button type="button" id="btn-toggle-view" aria-label="編集とプレビューを切り替え">
           プレビュー
         </button>
+        <button
+          type="button"
+          id="btn-settings"
+          aria-haspopup="dialog"
+        >
+          設定
+        </button>
         <span id="file-name" class="file-name" aria-live="polite">未選択</span>
       </header>
 
+      <div id="workspace" class="workspace sidebar-hidden">
+        <aside id="app-sidebar" class="sidebar" aria-label="ファイル一覧">
+          <div class="sidebar-header">
+            <button type="button" id="btn-open-folder">フォルダを開く</button>
+            <button
+              type="button"
+              id="btn-refresh-tree"
+              class="sidebar-icon-btn"
+              aria-label="一覧を再読み込み"
+              title="再読み込み"
+            >
+              ↻
+            </button>
+          </div>
+          <p id="workspace-root-label" class="workspace-root-label">
+            作業フォルダ未選択
+          </p>
+          <input
+            id="sidebar-filter"
+            class="sidebar-filter"
+            type="search"
+            placeholder="ファイル名で絞り込み"
+            autocomplete="off"
+          />
+          <nav id="file-tree" class="file-tree"></nav>
+        </aside>
+
+        <div class="main-pane">
+          <div
+            id="error-banner"
+            class="error-banner"
+            role="alert"
+            hidden
+          ></div>
+
+          <main class="content">
+            <textarea
+              id="editor"
+              class="editor"
+              aria-label="Markdown エディタ"
+              spellcheck="false"
+              placeholder="ファイルを開くか、ここに Markdown を入力してください"
+            ></textarea>
+            <article
+              id="preview"
+              class="preview"
+              aria-label="Markdown プレビュー"
+              hidden
+            ></article>
+          </main>
+
+          <footer class="statusbar" aria-live="polite">
+            <span id="save-status" class="save-status save-status--saved"
+              >保存済み</span
+            >
+          </footer>
+        </div>
+      </div>
+    </div>
+
+    <div id="settings-overlay" class="settings-overlay" hidden>
       <div
-        id="error-banner"
-        class="error-banner"
-        role="alert"
-        hidden
-      ></div>
-
-      <main class="content">
-        <textarea
-          id="editor"
-          class="editor"
-          aria-label="Markdown エディタ"
-          spellcheck="false"
-          placeholder="ファイルを開くか、ここに Markdown を入力してください"
-        ></textarea>
-        <article
-          id="preview"
-          class="preview"
-          aria-label="Markdown プレビュー"
-          hidden
-        ></article>
-      </main>
-
-      <footer class="statusbar" aria-live="polite">
-        <span id="save-status" class="save-status save-status--saved"
-          >保存済み</span
-        >
-      </footer>
+        id="settings-dialog"
+        class="settings-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="settings-title"
+        tabindex="-1"
+      >
+        <header class="settings-header">
+          <h2 id="settings-title" class="settings-title">表示設定</h2>
+          <button
+            type="button"
+            id="btn-settings-close"
+            class="settings-close"
+            aria-label="閉じる"
+          >
+            ×
+          </button>
+        </header>
+        <div class="settings-body">
+          <p id="settings-fonts-status" class="settings-fonts-status" hidden>
+            インストール済みフォントを読み込み中…
+          </p>
+          <div class="settings-row">
+            <label for="setting-editor-font-filter">編集フォント</label>
+            <input
+              id="setting-editor-font-filter"
+              type="search"
+              placeholder="フォント名で検索"
+              autocomplete="off"
+            />
+            <select id="setting-editor-font" size="6" aria-label="編集フォント一覧"></select>
+          </div>
+          <div class="settings-row">
+            <label for="setting-editor-size">
+              編集サイズ
+              <output id="setting-editor-size-value" for="setting-editor-size"></output>
+            </label>
+            <input id="setting-editor-size" type="range" step="1" />
+          </div>
+          <div class="settings-row">
+            <label for="setting-preview-font-filter">プレビューフォント</label>
+            <input
+              id="setting-preview-font-filter"
+              type="search"
+              placeholder="フォント名で検索"
+              autocomplete="off"
+            />
+            <select id="setting-preview-font" size="6" aria-label="プレビューフォント一覧"></select>
+          </div>
+          <div class="settings-row">
+            <label for="setting-preview-size">
+              プレビューサイズ
+              <output
+                id="setting-preview-size-value"
+                for="setting-preview-size"
+              ></output>
+            </label>
+            <input id="setting-preview-size" type="range" step="1" />
+          </div>
+        </div>
+        <footer class="settings-footer">
+          <button type="button" id="btn-settings-reset" class="settings-reset">
+            初期値に戻す
+          </button>
+        </footer>
+      </div>
     </div>
   </body>
 </html>

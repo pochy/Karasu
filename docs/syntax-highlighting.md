@@ -2,6 +2,8 @@
 
 Karasu の Markdown プレビューにおけるコードブロックのシンタックスハイライトについて、候補の比較と採用方針をまとめる。
 
+全体の設計判断は [`design-decisions.md`](design-decisions.md) を参照。
+
 ## 採用ライブラリ
 
 **[sugar-high](https://github.com/huozhi/sugar-high)** を採用する。
@@ -20,7 +22,7 @@ Karasu では次を優先する。
 | 中 | **I/O** | 初回ロード時のネットワーク・ディスク（フォント等） |
 | 低 | **ビルドサイズ** | バンドルや配布物の KB 数（本プロジェクトでは最優先にしない） |
 
-設計書（`docs/superpowers/specs/2026-06-03-tauri-markdown-viewer-design.md`）の「プレビューは必要時に更新する」「重い依存を増やしすぎない」とも整合する。
+設計方針（[`design-decisions.md`](design-decisions.md) の優先順位）の「プレビューは必要時に更新する」「重い依存を増やしすぎない」とも整合する。
 
 ## 候補の比較
 

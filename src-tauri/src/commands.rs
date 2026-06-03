@@ -1,4 +1,7 @@
+use crate::dir::{self, DirEntry};
+use crate::fonts;
 use crate::recent;
+use crate::workspace;
 use serde::Serialize;
 use std::path::Path;
 use tauri::AppHandle;
@@ -62,6 +65,30 @@ pub fn write_file(app: AppHandle, path: String, content: String) -> Result<(), S
 #[tauri::command]
 pub fn get_recent_path(app: AppHandle) -> Option<String> {
     recent::load_recent(&app)
+}
+
+#[tauri::command]
+pub fn list_system_fonts(mono_only: bool) -> Vec<String> {
+    fonts::list_system_font_families(mono_only)
+}
+
+#[tauri::command]
+pub fn list_directory(path: String) -> Result<Vec<DirEntry>, String> {
+    dir::list_directory(Path::new(&path))
+}
+
+#[tauri::command]
+pub fn get_workspace_root(app: AppHandle) -> Option<String> {
+    workspace::load_workspace_root(&app)
+}
+
+#[tauri::command]
+pub fn set_workspace_root(app: AppHandle, path: String) -> Result<(), String> {
+    let path_buf = Path::new(&path);
+    if !path_buf.is_dir() {
+        return Err("フォルダではありません".to_string());
+    }
+    workspace::save_workspace_root(&app, path_buf)
 }
 
 #[cfg(test)]

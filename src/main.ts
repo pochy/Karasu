@@ -1,6 +1,9 @@
 import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
 import { invalidatePreviewCache, renderMarkdownToHtml } from "./markdown";
+import { initDisplaySettings } from "./settings";
+import { initSidebarLayout } from "./sidebar-layout";
+import { initSidebar, type SidebarControls } from "./sidebar";
 
 type ViewMode = "edit" | "preview";
 type SaveStatus = "saved" | "unsaved";
@@ -34,9 +37,15 @@ const errorBanner = document.querySelector("#error-banner") as HTMLElement;
 const btnOpen = document.querySelector("#btn-open") as HTMLButtonElement;
 const btnToggleView = document.querySelector("#btn-toggle-view") as HTMLButtonElement;
 
+let sidebarControls: SidebarControls | null = null;
+
 function fileBaseName(path: string): string {
   const parts = path.split(/[/\\]/);
   return parts[parts.length - 1] || path;
+}
+
+function isDirty(): boolean {
+  return state.content !== state.savedContent;
 }
 
 function showError(message: string) {
@@ -50,7 +59,7 @@ function clearError() {
 }
 
 function updateSaveStatus() {
-  const unsaved = state.content !== state.savedContent;
+  const unsaved = isDirty();
   state.saveStatus = unsaved ? "unsaved" : "saved";
   saveStatusEl.textContent = unsaved ? "未保存" : "保存済み";
   saveStatusEl.classList.toggle("save-status--unsaved", unsaved);
@@ -101,6 +110,23 @@ async function loadFile(path: string) {
   invalidatePreviewCache();
   syncEditorFromState();
   clearError();
+  await sidebarControls?.highlightActiveFile();
+}
+
+function confirmDiscard(): boolean {
+  if (!isDirty()) return true;
+  return window.confirm(
+    "未保存の変更があります。破棄して別のファイルを開きますか？",
+  );
+}
+
+async function openFileWithGuard(path: string) {
+  if (!confirmDiscard()) return;
+  try {
+    await loadFile(path);
+  } catch (e) {
+    showError(String(e));
+  }
 }
 
 async function openFileDialog() {
@@ -116,11 +142,7 @@ async function openFileDialog() {
   if (selected === null || Array.isArray(selected)) return;
   const path =
     typeof selected === "string" ? selected : (selected as { path: string }).path;
-  try {
-    await loadFile(path);
-  } catch (e) {
-    showError(String(e));
-  }
+  await openFileWithGuard(path);
 }
 
 async function saveFile() {
@@ -188,6 +210,13 @@ editor.addEventListener("input", onEditorInput);
 window.addEventListener("keydown", onKeyDown);
 
 window.addEventListener("DOMContentLoaded", () => {
+  initSidebarLayout();
+  initDisplaySettings();
+  sidebarControls = initSidebar({
+    getActivePath: () => state.path,
+    isDirty,
+    openFile: openFileWithGuard,
+  });
   syncEditorFromState();
   void restoreRecentOnStartup();
 });
