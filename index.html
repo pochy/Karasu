@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="/src/styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Karasu</title>
+    <script type="module" src="/src/main.ts" defer></script>
+  </head>
+  <body>
+    <div id="app" class="app">
+      <header class="toolbar" role="toolbar" aria-label="メインツールバー">
+        <button type="button" id="btn-open" aria-label="ファイルを開く">
+          開く
+        </button>
+        <button type="button" id="btn-toggle-view" aria-label="編集とプレビューを切り替え">
+          プレビュー
+        </button>
+        <span id="file-name" class="file-name" aria-live="polite">未選択</span>
+      </header>
+
+      <div
+        id="error-banner"
+        class="error-banner"
+        role="alert"
+        hidden
+      ></div>
+
+      <main class="content">
+        <textarea
+          id="editor"
+          class="editor"
+          aria-label="Markdown エディタ"
+          spellcheck="false"
+          placeholder="ファイルを開くか、ここに Markdown を入力してください"
+        ></textarea>
+        <article
+          id="preview"
+          class="preview markdown-body"
+          aria-label="Markdown プレビュー"
+          hidden
+        ></article>
+      </main>
+
+      <footer class="statusbar" aria-live="polite">
+        <span id="save-status" class="save-status save-status--saved"
+          >保存済み</span
+        >
+      </footer>
+    </div>
+  </body>
+</html>
