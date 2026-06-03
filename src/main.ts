@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import { open } from "@tauri-apps/plugin-dialog";
-import { marked } from "marked";
+import { invalidatePreviewCache, renderMarkdownToHtml } from "./markdown";
 
 type ViewMode = "edit" | "preview";
 type SaveStatus = "saved" | "unsaved";
@@ -34,8 +34,6 @@ const errorBanner = document.querySelector("#error-banner") as HTMLElement;
 const btnOpen = document.querySelector("#btn-open") as HTMLButtonElement;
 const btnToggleView = document.querySelector("#btn-toggle-view") as HTMLButtonElement;
 
-marked.setOptions({ gfm: true, breaks: false });
-
 function fileBaseName(path: string): string {
   const parts = path.split(/[/\\]/);
   return parts[parts.length - 1] || path;
@@ -65,7 +63,7 @@ function updateFileName() {
 
 function renderPreview() {
   try {
-    preview.innerHTML = marked.parse(state.content) as string;
+    preview.innerHTML = renderMarkdownToHtml(state.content);
     clearError();
   } catch {
     showError("Markdown の変換に失敗しました");
@@ -100,6 +98,7 @@ async function loadFile(path: string) {
   state.path = result.path;
   state.content = result.content;
   state.savedContent = result.content;
+  invalidatePreviewCache();
   syncEditorFromState();
   clearError();
 }
@@ -150,6 +149,7 @@ function toggleView() {
 
 function onEditorInput() {
   state.content = editor.value;
+  invalidatePreviewCache();
   updateSaveStatus();
 }
 
