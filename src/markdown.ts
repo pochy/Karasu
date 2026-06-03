@@ -1,4 +1,7 @@
 import { marked } from "marked";
+import markedAlert from "marked-alert";
+import markedFootnote from "marked-footnote";
+import { gfmHeadingId, resetHeadings } from "marked-gfm-heading-id";
 import { highlight } from "sugar-high";
 import * as presets from "sugar-high/presets";
 
@@ -47,10 +50,17 @@ function highlightCode(text: string, lang: string | undefined): string {
 
 marked.setOptions({ gfm: true, breaks: false });
 
+marked.use(markedFootnote());
+marked.use(markedAlert());
+marked.use(gfmHeadingId());
+
 marked.use({
   renderer: {
     code({ text, lang }) {
-      const language = lang?.trim() ?? "";
+      const language = lang?.trim().toLowerCase() ?? "";
+      if (language === "mermaid") {
+        return `<pre class="mermaid">${escapeHtml(text)}</pre>`;
+      }
       const body = highlightCode(text, language || undefined);
       const langAttr = language
         ? ` class="language-${escapeHtml(language)}"`
@@ -71,10 +81,11 @@ export function stripFrontMatter(md: string): string {
 }
 
 export function renderMarkdownToHtml(content: string): string {
-  const forPreview = stripFrontMatter(content);
   if (previewCache?.content === content) {
     return previewCache.html;
   }
+  const forPreview = stripFrontMatter(content);
+  resetHeadings();
   const html = marked.parse(forPreview) as string;
   previewCache = { content, html };
   return html;

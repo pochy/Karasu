@@ -2,6 +2,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { open, save } from "@tauri-apps/plugin-dialog";
 import { openUrl } from "@tauri-apps/plugin-opener";
+import { renderMermaidIn } from "./mermaid-preview";
 import { invalidatePreviewCache, renderMarkdownToHtml } from "./markdown";
 import {
   getFileWatchEnabled,
@@ -119,9 +120,10 @@ function persistScrollBeforeSwitch() {
   saveScrollPosition(state.path, editor.scrollTop, preview.scrollTop);
 }
 
-function renderPreview() {
+async function renderPreview() {
   try {
     preview.innerHTML = renderMarkdownToHtml(state.content);
+    await renderMermaidIn(preview);
     clearError();
   } catch {
     showError("Markdown の変換に失敗しました");
@@ -138,10 +140,11 @@ function applyView() {
     editing ? "プレビュー表示に切り替え" : "編集画面に切り替え",
   );
   if (!editing) {
-    renderPreview();
-    if (state.path) {
-      restoreScrollPosition(state.path, editor, preview);
-    }
+    void renderPreview().then(() => {
+      if (state.path) {
+        restoreScrollPosition(state.path, editor, preview);
+      }
+    });
   } else if (savedSelection) {
     const { start, end } = savedSelection;
     savedSelection = null;

@@ -603,6 +603,89 @@ body {
   accent-color: #0031d8;
 }
 
+.preview del {
+  text-decoration: line-through;
+  color: #737373;
+}
+
+.preview .markdown-alert {
+  margin: 1rem 0;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid #0031d8;
+  border-radius: 0.375rem;
+  background: #f5f8ff;
+  color: #1a1a1a;
+  font-size: 0.944em;
+}
+
+.preview .markdown-alert-title {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.preview .markdown-alert-note {
+  border-left-color: #0031d8;
+  background: #f5f8ff;
+}
+
+.preview .markdown-alert-tip {
+  border-left-color: #1a7f37;
+  background: #f0fff4;
+}
+
+.preview .markdown-alert-important {
+  border-left-color: #8250df;
+  background: #fbf7ff;
+}
+
+.preview .markdown-alert-warning {
+  border-left-color: #9a6700;
+  background: #fffbeb;
+}
+
+.preview .markdown-alert-caution {
+  border-left-color: #cf222e;
+  background: #fff5f5;
+}
+
+.preview section.footnotes {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e6e6e6;
+  font-size: 0.889em;
+  color: #525252;
+}
+
+.preview section.footnotes ol {
+  padding-left: 1.5rem;
+}
+
+.preview pre.mermaid {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  overflow-x: auto;
+  background-color: #ffffff;
+  border: 1px solid #e6e6e6;
+  border-radius: 0.5rem;
+  color: #1a1a1a;
+}
+
+.preview pre.mermaid code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+}
+
+.preview .mermaid svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
 .sidebar-section-title {
   margin: 0 0 0.35rem;
   font-size: 0.75rem;
