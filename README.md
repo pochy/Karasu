@@ -60,3 +60,7 @@ npm run tauri build
 ```bash
 cd src-tauri && cargo test
 ```
+
+## ライセンス
+
+[MIT License](LICENSE)

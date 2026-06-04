@@ -1,0 +1,41 @@
+---
+description: Tauri Rust コマンド・ディレクトリ列挙・永続化の規約
+globs: src-tauri/**/*.rs
+alwaysApply: false
+---
+
+# Rust / Tauri 規約
+
+## 構成
+
+- コマンドは `commands.rs`。列挙 `dir.rs`、検索 `search.rs`、MRU `recent.rs`、監視 `watch.rs`、作業フォルダ `workspace.rs`
+- 新コマンドは `lib.rs` の `generate_handler!` に登録
+
+## I/O 原則
+
+- **再帰的全走査しない**。ツリーは `list_directory` で 1 階層ずつ
+- `dir.rs` の除外（`.git`, `node_modules`, `target`, `dist` 等）を壊さない
+- 表示拡張子: `.md`, `.markdown`, `.mdown`, `.mkd`, `.txt`
+
+## エラー
+
+- `?` が使えないコンテキストでは `if let` / `map_err` で明示（`main.rs` エントリ以外）
+- フロントへは文字列化したエラーを返し、`showError` で表示
+
+## 永続化
+
+- アプリデータ: `recent.json`（MRU 最大 10）、作業フォルダパス
+- フロントの `localStorage` キーは `karasu-*` 接頭辞（既存キーと衝突させない）
+
+## 監視
+
+- `notify` は `set_workspace_watch` で ON/OFF。既定 OFF・デバウンス 300ms
+- 巨大 repo でのイベント洪水を想定し、常時監視を既定にしない
+
+## 検証
+
+```bash
+cd src-tauri && cargo test
+```
+
+Rust 変更後は上記を実行する。

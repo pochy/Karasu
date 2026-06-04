@@ -1,0 +1,36 @@
+---
+description: ドキュメント・バックログ・README の更新規約
+globs: docs/**/*.{md,mdc},README.md
+alwaysApply: false
+---
+
+# ドキュメント規約
+
+## 正本
+
+| 用途 | ファイル |
+|------|----------|
+| 設計判断・バックログ | `docs/design-decisions.md` |
+| ハイライト選定 | `docs/syntax-highlighting.md` |
+| 初期要件 | `docs/superpowers/specs/2026-06-03-tauri-markdown-viewer-design.md` |
+| 使い方 | `README.md` |
+
+## 機能を足したとき
+
+1. `docs/design-decisions.md` の [機能バックログ](#機能バックログ提案一覧) に **ID 採番**（例: G1）。群 A〜F の次は未使用の英字
+2. 表に「詳細・影響・難度・工数・ステータス」を埋める
+3. マージ後は `実装済み` に更新。却下は E 節の形式で理由を残す
+4. ユーザー向け機能は `README.md` に 1 行追記
+
+## プレビュー関連の記述
+
+- GFM parity 表（数式・colspan はスコープ外）を維持
+- Mermaid は遅延 import・図上限（20 / 8KB）を性能注記に含める
+
+## サンプル
+
+手動確認用 MD は `docs/samples/` に置く（例: `gfm-mermaid.md`）
+
+## 編集しないもの
+
+- `.cursor/plans/*.plan.md`（ユーザーのプランファイル）

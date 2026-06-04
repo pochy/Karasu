@@ -120,6 +120,7 @@ export function initSidebar(deps: SidebarDeps): SidebarControls {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "tree-node-btn";
+    btn.title = entry.path;
 
     if (entry.is_dir) {
       const isOpen = expanded.has(entry.path);
@@ -186,7 +187,7 @@ export function initSidebar(deps: SidebarDeps): SidebarControls {
 
   const scrollActiveIntoView = () => {
     const active = treeEl.querySelector(".tree-node-btn--active");
-    active?.scrollIntoView({ block: "nearest" });
+    active?.scrollIntoView({ block: "nearest", inline: "nearest" });
   };
 
   const renderTree = async () => {
