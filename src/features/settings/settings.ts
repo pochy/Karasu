@@ -5,7 +5,7 @@ import {
   fontFamilyToCss,
   labelForFontFamily,
   migrateLegacyFontId,
-} from "./fonts";
+} from "../../core/fonts";
 
 const STORAGE_KEY = "karasu-display-settings";
 

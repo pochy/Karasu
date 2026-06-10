@@ -20,6 +20,23 @@ const SKIP_DIR_NAMES: &[&str] = &[
 ];
 
 const MARKDOWN_EXTENSIONS: &[&str] = &["md", "markdown", "mdown", "mkd", "txt"];
+const JSON_EXTENSIONS: &[&str] = &["json", "jsonc"];
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum FileKind {
+    Markdown,
+    Json,
+}
+
+impl FileKind {
+    pub fn parse(s: &str) -> Self {
+        if s.eq_ignore_ascii_case("json") {
+            FileKind::Json
+        } else {
+            FileKind::Markdown
+        }
+    }
+}
 
 pub fn should_skip_dir(name: &str) -> bool {
     if name.starts_with('.') {
@@ -29,16 +46,31 @@ pub fn should_skip_dir(name: &str) -> bool {
 }
 
 pub fn is_markdown_file(path: &Path) -> bool {
+    has_extension(path, MARKDOWN_EXTENSIONS)
+}
+
+pub fn is_json_file(path: &Path) -> bool {
+    has_extension(path, JSON_EXTENSIONS)
+}
+
+fn has_extension(path: &Path, extensions: &[&str]) -> bool {
     path.extension()
         .map(|e| {
             let ext = e.to_string_lossy().to_lowercase();
-            MARKDOWN_EXTENSIONS.iter().any(|m| *m == ext)
+            extensions.iter().any(|m| *m == ext)
         })
         .unwrap_or(false)
 }
 
+pub fn is_listable_file(path: &Path, kind: FileKind) -> bool {
+    match kind {
+        FileKind::Markdown => is_markdown_file(path),
+        FileKind::Json => is_json_file(path),
+    }
+}
+
 /// 1 階層だけ列挙する（遅延ツリー用）。
-pub fn list_directory(path: &Path) -> Result<Vec<DirEntry>, String> {
+pub fn list_directory(path: &Path, kind: FileKind) -> Result<Vec<DirEntry>, String> {
     if !path.exists() {
         return Err("フォルダが存在しません".to_string());
     }
@@ -66,7 +98,7 @@ pub fn list_directory(path: &Path) -> Result<Vec<DirEntry>, String> {
                 path: child_path.to_string_lossy().into_owned(),
                 is_dir: true,
             });
-        } else if meta.is_file() && is_markdown_file(&child_path) {
+        } else if meta.is_file() && is_listable_file(&child_path, kind) {
             entries.push(DirEntry {
                 name,
                 path: child_path.to_string_lossy().into_owned(),
@@ -98,7 +130,7 @@ mod tests {
         fs::create_dir(dir.path().join("notes")).unwrap();
         fs::create_dir(dir.path().join("node_modules")).unwrap();
 
-        let entries = list_directory(dir.path()).unwrap();
+        let entries = list_directory(dir.path(), FileKind::Markdown).unwrap();
         let names: Vec<_> = entries.iter().map(|e| e.name.as_str()).collect();
         assert!(names.contains(&"notes"));
         assert!(names.contains(&"a.md"));

@@ -1,15 +1,39 @@
 # Karasu 参照（機能開発）
 
-## 主なファイル
+## ディレクトリ構成
+
+```
+src/
+  main.ts                 # エントリ・モード切替配線
+  app/                    # アプリシェル
+    chrome.ts             # ステータスバー・共通ツールバー
+    activity-bar.ts       # 左アイコンバー
+    editor-mode.ts        # Markdown / JSON モード
+  core/                   # 共通
+    editor-controller.ts  # エディタ共通 IF
+    session-state.ts      # スクロール記憶
+    fonts.ts              # フォント列挙ヘルパ
+  features/
+    markdown/
+      editor.ts           # Markdown エディタ本体
+      preview/            # marked・Mermaid
+      sidebar/            # ファイル一覧（Markdown 専用）
+    json/
+      editor.ts           # JSON エディタ本体
+      tree-view.ts        # ツリービュー
+    settings/
+      settings.ts         # 表示設定モーダル
+  styles/
+    app.css               # シェル・サイドバー・設定
+    markdown-editor.css
+    json-editor.css
+  assets/
+```
+
+## Rust
 
 | 領域 | パス |
 |------|------|
-| 入口 | `src/main.ts` |
-| Markdown | `src/markdown.ts`, `src/mermaid-preview.ts` |
-| サイドバー | `src/sidebar.ts`, `src/sidebar-layout.ts` |
-| 設定 | `src/settings.ts`, `src/fonts.ts` |
-| セッション | `src/session-state.ts` |
-| スタイル | `src/styles.css` |
 | コマンド | `src-tauri/src/commands.rs` |
 | 列挙 | `src-tauri/src/dir.rs` |
 
@@ -17,6 +41,7 @@
 
 | キー | 用途 |
 |------|------|
+| `karasu-editor-mode` | Markdown / JSON |
 | `karasu-sidebar-visible` | サイドバー開閉 |
 | `karasu-scroll-positions` | パス別 scrollTop |
 | `karasu-display-settings` | フォント・監視・エディタライト |

@@ -24,6 +24,8 @@ const MARKDOWN_FILTERS = [
   },
 ];
 
+const MARKDOWN_EXTENSIONS = [".md", ".markdown", ".mdown", ".mkd", ".txt"];
+
 export interface SidebarControls {
   highlightActiveFile: () => Promise<void>;
   pickWorkspaceFolder: () => Promise<void>;
@@ -79,7 +81,10 @@ export function initSidebar(deps: SidebarDeps): SidebarControls {
 
   const fetchDir = async (path: string): Promise<DirEntry[]> => {
     if (cache.has(path)) return cache.get(path)!;
-    const entries = await invoke<DirEntry[]>("list_directory", { path });
+    const entries = await invoke<DirEntry[]>("list_directory", {
+      path,
+      fileKind: "markdown",
+    });
     cache.set(path, entries);
     return entries;
   };
@@ -262,8 +267,13 @@ export function initSidebar(deps: SidebarDeps): SidebarControls {
     await highlightActiveFile();
   };
 
+  const isMarkdownPath = (filePath: string): boolean => {
+    const lower = filePath.toLowerCase();
+    return MARKDOWN_EXTENSIONS.some((ext) => lower.endsWith(ext));
+  };
+
   const renderRecentList = async () => {
-    const paths = await invoke<string[]>("get_recent_paths");
+    const paths = (await invoke<string[]>("get_recent_paths")).filter(isMarkdownPath);
     recentEl.replaceChildren();
     if (paths.length === 0) {
       const empty = document.createElement("p");
@@ -321,6 +331,7 @@ export function initSidebar(deps: SidebarDeps): SidebarControls {
       const hits = await invoke<DirEntry[]>("search_filenames", {
         root: workspaceRoot,
         query: q,
+        fileKind: "markdown",
       });
       renderSearchResults(hits);
     } catch (e) {

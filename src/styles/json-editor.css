@@ -1,0 +1,148 @@
+#json-screen .json-tree {
+  flex: 1;
+  overflow: auto;
+  padding: 0.75rem 1rem;
+  font-family: var(--editor-font-family);
+  font-size: var(--editor-font-size);
+  line-height: 1.5;
+  background: #fff;
+  color: #1a1a1a;
+}
+
+#json-screen .json-tree[hidden] {
+  display: none;
+}
+
+#json-screen .json-tree-empty {
+  margin: 0.5rem 0;
+  font-size: 0.875rem;
+  color: #737373;
+}
+
+#json-screen .json-tree-node {
+  padding-left: calc(var(--depth, 0) * 1rem);
+}
+
+#json-screen .json-tree-head,
+#json-screen .json-tree-leaf {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+  min-height: 1.5rem;
+}
+
+#json-screen .json-tree-head {
+  width: 100%;
+  padding: 0.1rem 0.25rem;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+}
+
+#json-screen .json-tree-head:hover {
+  background: rgb(0 0 0 / 0.05);
+}
+
+#json-screen .json-tree-chevron {
+  display: inline-block;
+  width: 0.75rem;
+  font-size: 0.625rem;
+  color: #737373;
+  flex-shrink: 0;
+}
+
+#json-screen .json-tree-key {
+  color: #7c3aed;
+  font-weight: 600;
+}
+
+#json-screen .json-tree-colon {
+  color: #737373;
+}
+
+#json-screen .json-tree-summary {
+  color: #737373;
+  font-size: 0.875em;
+}
+
+#json-screen .json-tree-value--string {
+  color: #047857;
+}
+
+#json-screen .json-tree-value--number {
+  color: #1d4ed8;
+}
+
+#json-screen .json-tree-value--boolean {
+  color: #b45309;
+}
+
+#json-screen .json-tree-value--null {
+  color: #737373;
+  font-style: italic;
+}
+
+#json-screen .json-tree-children {
+  margin-left: 0.5rem;
+  border-left: 1px solid var(--border);
+}
+
+#json-screen .json-tree-children[hidden] {
+  display: none;
+}
+
+#json-screen .json-editor {
+  flex: 1;
+  width: 100%;
+  resize: none;
+  border: none;
+  padding: 1rem 1.25rem;
+  font-family: var(--editor-font-family);
+  font-size: var(--editor-font-size);
+  line-height: 1.65;
+  background: #fff;
+  color: #1a1a1a;
+  caret-color: #1a1a1a;
+}
+
+#json-screen .json-editor:focus {
+  outline: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  #json-screen .json-editor {
+    background: #1f1f1f;
+    color: #e5e5e5;
+    caret-color: #e5e5e5;
+  }
+
+  #json-screen .json-tree {
+    background: #1f1f1f;
+    color: #e5e5e5;
+  }
+
+  #json-screen .json-tree-head:hover {
+    background: rgb(255 255 255 / 0.06);
+  }
+}
+
+:root.editor-light #json-screen .json-editor,
+:root.editor-light #json-screen .json-tree {
+  background: #ffffff;
+  color: #1a1a1a;
+  caret-color: #1a1a1a;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root.editor-light #json-screen .json-editor,
+  :root.editor-light #json-screen .json-tree {
+    background: #ffffff;
+    color: #1a1a1a;
+    caret-color: #1a1a1a;
+  }
+}

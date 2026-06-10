@@ -1,9 +1,13 @@
-use crate::dir::{self, DirEntry};
+use crate::dir::{self, DirEntry, FileKind};
 use std::path::Path;
 
 const MAX_RESULTS: usize = 200;
 
-pub fn search_filenames(root: &Path, query: &str) -> Result<Vec<DirEntry>, String> {
+pub fn search_filenames(
+    root: &Path,
+    query: &str,
+    kind: FileKind,
+) -> Result<Vec<DirEntry>, String> {
     let q = query.trim().to_lowercase();
     if q.is_empty() {
         return Ok(Vec::new());
@@ -16,12 +20,17 @@ pub fn search_filenames(root: &Path, query: &str) -> Result<Vec<DirEntry>, Strin
     }
 
     let mut results = Vec::new();
-    walk(root, &q, &mut results)?;
+    walk(root, &q, kind, &mut results)?;
     results.sort_by(|a, b| a.name.to_lowercase().cmp(&b.name.to_lowercase()));
     Ok(results)
 }
 
-fn walk(dir: &Path, query: &str, results: &mut Vec<DirEntry>) -> Result<(), String> {
+fn walk(
+    dir: &Path,
+    query: &str,
+    kind: FileKind,
+    results: &mut Vec<DirEntry>,
+) -> Result<(), String> {
     if results.len() >= MAX_RESULTS {
         return Ok(());
     }
@@ -42,8 +51,8 @@ fn walk(dir: &Path, query: &str, results: &mut Vec<DirEntry>) -> Result<(), Stri
             if dir::should_skip_dir(&name) {
                 continue;
             }
-            walk(&child_path, query, results)?;
-        } else if meta.is_file() && dir::is_markdown_file(&child_path) {
+            walk(&child_path, query, kind, results)?;
+        } else if meta.is_file() && dir::is_listable_file(&child_path, kind) {
             if name.to_lowercase().contains(query) {
                 results.push(DirEntry {
                     name,
@@ -71,7 +80,8 @@ mod tests {
         fs::create_dir(&sub).unwrap();
         fs::write(sub.join("hello-note.md"), "").unwrap();
 
-        let hits = search_filenames(dir.path(), "hello").unwrap();
+        let hits =
+            search_filenames(dir.path(), "hello", FileKind::Markdown).unwrap();
         assert_eq!(hits.len(), 2);
     }
 
@@ -83,7 +93,7 @@ mod tests {
         fs::write(nm.join("hidden.md"), "").unwrap();
         fs::write(dir.path().join("visible.md"), "").unwrap();
 
-        let hits = search_filenames(dir.path(), "md").unwrap();
+        let hits = search_filenames(dir.path(), "md", FileKind::Markdown).unwrap();
         assert_eq!(hits.len(), 1);
         assert_eq!(hits[0].name, "visible.md");
     }
@@ -91,6 +101,10 @@ mod tests {
     #[test]
     fn empty_query_returns_empty() {
         let dir = tempdir().unwrap();
-        assert!(search_filenames(dir.path(), "  ").unwrap().is_empty());
+        assert!(
+            search_filenames(dir.path(), "  ", FileKind::Markdown)
+                .unwrap()
+                .is_empty()
+        );
     }
 }

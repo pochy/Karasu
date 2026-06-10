@@ -2,7 +2,7 @@
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="/src/styles.css" />
+    <link rel="stylesheet" href="/src/styles/app.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Karasu</title>
     <script type="module" src="/src/main.ts" defer></script>
@@ -29,6 +29,22 @@
         </button>
         <button
           type="button"
+          id="btn-json-format"
+          hidden
+          aria-label="JSON を整形"
+        >
+          整形
+        </button>
+        <button
+          type="button"
+          id="btn-json-tree"
+          hidden
+          aria-label="編集とツリー表示を切り替え"
+        >
+          ツリー
+        </button>
+        <button
+          type="button"
           id="btn-settings"
           aria-haspopup="dialog"
         >
@@ -38,6 +54,13 @@
       </header>
 
       <div id="workspace" class="workspace sidebar-hidden">
+        <nav
+          id="activity-bar"
+          class="activity-bar"
+          role="navigation"
+          aria-label="エディタ切り替え"
+        ></nav>
+
         <aside id="app-sidebar" class="sidebar" aria-label="ファイル一覧">
           <div class="sidebar-header">
             <button type="button" id="btn-open-folder">フォルダを開く</button>
@@ -90,19 +113,36 @@
           ></div>
 
           <main class="content">
-            <textarea
-              id="editor"
-              class="editor"
-              aria-label="Markdown エディタ"
-              spellcheck="false"
-              placeholder="ファイルを開くか、ここに Markdown を入力してください"
-            ></textarea>
-            <article
-              id="preview"
-              class="preview"
-              aria-label="Markdown プレビュー"
-              hidden
-            ></article>
+            <div id="markdown-screen" class="editor-screen">
+              <textarea
+                id="editor"
+                class="markdown-editor"
+                aria-label="Markdown エディタ"
+                spellcheck="false"
+                placeholder="ファイルを開くか、ここに Markdown を入力してください"
+              ></textarea>
+              <article
+                id="preview"
+                class="preview"
+                aria-label="Markdown プレビュー"
+                hidden
+              ></article>
+            </div>
+            <div id="json-screen" class="editor-screen" hidden>
+              <textarea
+                id="json-editor"
+                class="json-editor"
+                aria-label="JSON エディタ"
+                spellcheck="false"
+                placeholder="ファイルを開くか、ここに JSON を入力してください"
+              ></textarea>
+              <div
+                id="json-tree"
+                class="json-tree"
+                aria-label="JSON ツリー"
+                hidden
+              ></div>
+            </div>
           </main>
 
           <footer class="statusbar" aria-live="polite">

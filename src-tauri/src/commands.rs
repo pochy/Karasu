@@ -1,4 +1,4 @@
-use crate::dir::{self, DirEntry};
+use crate::dir::{self, DirEntry, FileKind};
 use crate::fonts;
 use crate::recent;
 use crate::search;
@@ -75,8 +75,13 @@ pub fn get_recent_paths(app: AppHandle) -> Vec<String> {
 }
 
 #[tauri::command]
-pub fn search_filenames(root: String, query: String) -> Result<Vec<DirEntry>, String> {
-    search::search_filenames(Path::new(&root), &query)
+pub fn search_filenames(
+    root: String,
+    query: String,
+    file_kind: Option<String>,
+) -> Result<Vec<DirEntry>, String> {
+    let kind = FileKind::parse(file_kind.as_deref().unwrap_or("markdown"));
+    search::search_filenames(Path::new(&root), &query, kind)
 }
 
 #[tauri::command]
@@ -94,8 +99,9 @@ pub fn list_system_fonts(mono_only: bool) -> Vec<String> {
 }
 
 #[tauri::command]
-pub fn list_directory(path: String) -> Result<Vec<DirEntry>, String> {
-    dir::list_directory(Path::new(&path))
+pub fn list_directory(path: String, file_kind: Option<String>) -> Result<Vec<DirEntry>, String> {
+    let kind = FileKind::parse(file_kind.as_deref().unwrap_or("markdown"));
+    dir::list_directory(Path::new(&path), kind)
 }
 
 #[tauri::command]

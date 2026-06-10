@@ -8,33 +8,35 @@ alwaysApply: false
 
 ## スタック
 
-- **Vanilla TypeScript**（React/Vue 禁止）。状態は `main.ts` の `state` + モジュール初期化
+- **Vanilla TypeScript**（React/Vue 禁止）。`main.ts` は配線のみ。状態は各 `features/*/editor.ts`
 - 重い処理は `invoke()` で Rust。編集ループは textarea + CSS のみ
 
-## モジュール責務
+## ディレクトリ
 
-| ファイル | 役割 |
-|----------|------|
-| `main.ts` | 保存・開く・プレビュー切替・ショートカット |
-| `markdown.ts` | marked + GFM 拡張。`mermaid` は sugar-high しない |
-| `mermaid-preview.ts` | `pre.mermaid` があるときだけ動的 import |
-| `sidebar.ts` | 遅延ツリー・MRU・検索。`list_directory` は 1 階層ずつ |
-| `settings.ts` | `localStorage` 表示設定・監視 ON/OFF |
-| `session-state.ts` | スクロール位置など |
+| パス | 役割 |
+|------|------|
+| `src/main.ts` | 起動・エディタ切替 |
+| `src/app/` | シェル UI（chrome, activity-bar, editor-mode） |
+| `src/core/` | 共通型・session-state・fonts |
+| `src/features/markdown/` | MD エディタ・プレビュー・サイドバー |
+| `src/features/json/` | JSON エディタ・ツリービュー |
+| `src/features/settings/` | 表示設定 |
+| `src/styles/` | app / markdown / json の CSS |
 
-## プレビュー
+## プレビュー（`features/markdown/preview/`）
 
 - `renderMarkdownToHtml` は **プレビュー表示時のみ**。キャッシュキーは strip 後内容
 - Mermaid: `renderMermaidIn(preview)` を `innerHTML` の後に `await`
 - 外部リンク: `http(s)` のみ、`preventDefault` + `openUrl`
 - プレビュー HTML を `innerHTML` に入れる箇所では信頼できる自前 MD のみ
 
-## サイドバー
+## サイドバー（Markdown 専用）
 
 - 深いネスト: `.file-tree` で横スクロール。`.tree-label` は `ellipsis` に戻さない
 - フィルタは DOM の `tree-node--filtered` で非表示（再帰スキャンしない）
 
 ## スタイル
 
-- DADS 風ライトは `.preview` 配下。変数は `styles.css` の既存 `--*` を踏襲
-- 新機能の CSS は既存セクション近くに追加し、ダーク用 `@media (prefers-color-scheme: dark)` があれば揃える
+- DADS 風ライトは `.preview` 配下（`styles/markdown-editor.css`）
+- シェル変数は `styles/app.css` の `--*` を踏襲
+- 機能 CSS は `styles/markdown-editor.css` / `styles/json-editor.css` に分離
