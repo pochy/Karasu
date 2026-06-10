@@ -59,6 +59,7 @@ const MARKDOWN_FILTERS = [
 
 let sidebarControls: SidebarControls | null = null;
 let savedSelection: { start: number; end: number } | null = null;
+let lastRenderedPreviewContent: string | null = null;
 
 function fileBaseName(path: string): string {
   const parts = path.split(/[/\\]/);
@@ -121,9 +122,13 @@ function persistScrollBeforeSwitch() {
 }
 
 async function renderPreview() {
+  if (lastRenderedPreviewContent === state.content) {
+    return;
+  }
   try {
     preview.innerHTML = renderMarkdownToHtml(state.content);
     await renderMermaidIn(preview);
+    lastRenderedPreviewContent = state.content;
     clearError();
   } catch {
     showError("Markdown の変換に失敗しました");
@@ -175,6 +180,7 @@ async function loadFile(path: string) {
   state.content = result.content;
   state.savedContent = result.content;
   invalidatePreviewCache();
+  lastRenderedPreviewContent = null;
   syncEditorFromState();
   clearError();
   await sidebarControls?.highlightActiveFile();
@@ -244,6 +250,7 @@ async function saveFileAs() {
     state.path = path;
     state.savedContent = state.content;
     invalidatePreviewCache();
+    lastRenderedPreviewContent = null;
     syncEditorFromState();
     clearError();
     await sidebarControls?.highlightActiveFile();
@@ -259,6 +266,8 @@ function toggleView() {
       start: editor.selectionStart,
       end: editor.selectionEnd,
     };
+  } else {
+    invalidatePreviewCache();
   }
   state.view = state.view === "edit" ? "preview" : "edit";
   applyView();

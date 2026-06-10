@@ -89,6 +89,20 @@ export function initSidebar(deps: SidebarDeps): SidebarControls {
     expanded.clear();
   };
 
+  const pruneDescendants = (path: string) => {
+    const prefix = `${path}${path.includes("\\") ? "\\" : "/"}`;
+    for (const key of cache.keys()) {
+      if (key.startsWith(prefix)) {
+        cache.delete(key);
+      }
+    }
+    for (const key of expanded) {
+      if (key.startsWith(prefix)) {
+        expanded.delete(key);
+      }
+    }
+  };
+
   const expandToFile = async (filePath: string) => {
     if (!workspaceRoot || !filePath.startsWith(workspaceRoot)) return;
 
@@ -228,6 +242,7 @@ export function initSidebar(deps: SidebarDeps): SidebarControls {
   const toggleDir = async (path: string) => {
     if (expanded.has(path)) {
       expanded.delete(path);
+      pruneDescendants(path);
     } else {
       expanded.add(path);
     }

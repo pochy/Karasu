@@ -238,6 +238,7 @@ export function initDisplaySettings(): void {
   let editorFamilies: string[] = [];
   let previewFamilies: string[] = [];
   let fontsLoaded = false;
+  let fontLoadToken = 0;
   let current = { ...DEFAULT_DISPLAY_SETTINGS };
   let lastFocused: HTMLElement | null = null;
 
@@ -284,9 +285,13 @@ export function initDisplaySettings(): void {
 
   const ensureFonts = async () => {
     if (fontsLoaded) return;
+    const requestToken = ++fontLoadToken;
     fontsStatus.hidden = false;
     fontsStatus.textContent = "インストール済みフォントを読み込み中…";
     const lists = await fetchSystemFonts();
+    if (requestToken !== fontLoadToken || overlay.hidden) {
+      return;
+    }
     editorFamilies = lists.editor;
     previewFamilies = lists.preview;
     fontsLoaded = true;
@@ -305,6 +310,14 @@ export function initDisplaySettings(): void {
 
   const closeSettings = () => {
     overlay.hidden = true;
+    fontLoadToken += 1;
+    editorFontSelect.replaceChildren();
+    previewFontSelect.replaceChildren();
+    editorFamilies = [];
+    previewFamilies = [];
+    fontsLoaded = false;
+    fontsStatus.hidden = true;
+    fontsStatus.textContent = "";
     lastFocused?.focus();
     lastFocused = null;
   };
@@ -314,14 +327,6 @@ export function initDisplaySettings(): void {
   editorFamilies = FALLBACK_FONT_FAMILIES.filter((f) => f !== SYSTEM_UI_FAMILY);
   current = loadDisplaySettings(editorFamilies, previewFamilies);
   applyDisplaySettings(current);
-
-  void fetchSystemFonts().then((lists) => {
-    editorFamilies = lists.editor;
-    previewFamilies = lists.preview;
-    fontsLoaded = true;
-    current = loadDisplaySettings(editorFamilies, previewFamilies);
-    applyDisplaySettings(current);
-  });
 
   btnOpen.addEventListener("click", openSettings);
   btnClose.addEventListener("click", closeSettings);
