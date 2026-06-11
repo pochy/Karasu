@@ -31,6 +31,8 @@ export interface SidebarControls {
   pickWorkspaceFolder: () => Promise<void>;
   refreshRecentList: () => Promise<void>;
   getWorkspaceRoot: () => string | null;
+  suspend: () => Promise<void>;
+  restoreFromDisk: () => Promise<void>;
 }
 
 function joinPath(base: string, name: string): string {
@@ -399,24 +401,47 @@ export function initSidebar(deps: SidebarDeps): SidebarControls {
     void renderTree();
   });
 
-  void (async () => {
+  void listen<string>("tray-workspace-opened", async (event) => {
+    workspaceRoot = event.payload;
+    expanded.clear();
+    expanded.add(event.payload);
+    cache.clear();
+    setRootLabel();
+    await syncWatch();
+    await renderTree();
+  });
+
+  async function restoreFromDisk() {
     const saved = await invoke<string | null>("get_workspace_root");
-    if (saved) {
-      workspaceRoot = saved;
-      expanded.add(saved);
-      setRootLabel();
-      await syncWatch();
-      await renderTree();
-    } else {
-      setRootLabel();
-    }
+    workspaceRoot = saved;
+    expanded.clear();
+    if (saved) expanded.add(saved);
+    setRootLabel();
+    await syncWatch();
+    if (workspaceRoot) await renderTree();
     await renderRecentList();
-  })();
+  }
+
+  async function suspendMemory() {
+    await invoke("set_workspace_watch", { enabled: false, path: null });
+    cache.clear();
+    expanded.clear();
+    workspaceRoot = null;
+    treeEl.replaceChildren();
+    recentEl.replaceChildren();
+    searchResultsEl.replaceChildren();
+    filterInput.value = "";
+    setRootLabel();
+  }
+
+  void restoreFromDisk();
 
   return {
     highlightActiveFile,
     pickWorkspaceFolder,
     refreshRecentList: renderRecentList,
     getWorkspaceRoot: () => workspaceRoot,
+    suspend: suspendMemory,
+    restoreFromDisk,
   };
 }

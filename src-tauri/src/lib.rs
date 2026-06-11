@@ -2,8 +2,11 @@ mod commands;
 mod csv;
 mod dir;
 mod fonts;
+mod lifecycle;
+mod memory;
 mod recent;
 mod search;
+mod tray;
 mod watch;
 mod workspace;
 
@@ -19,6 +22,7 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .setup(|app| {
             app.manage(CsvState(Mutex::new(CsvRegistry::new())));
+            tray::setup_tray(app.handle())?;
             Ok(())
         })
         .manage(Mutex::new(WatchState::default()))
@@ -33,6 +37,8 @@ pub fn run() {
             commands::set_workspace_root,
             commands::search_filenames,
             commands::set_workspace_watch,
+            commands::suspend_app_resources,
+            commands::refresh_tray_menu,
             commands::csv_open,
             commands::csv_read_rows,
             commands::csv_set_cell,

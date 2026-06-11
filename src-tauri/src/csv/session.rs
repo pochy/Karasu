@@ -2,6 +2,7 @@ use crate::csv::index::{
     build_index_from_file, load_cached_index, read_row_bytes, save_index, CheckpointIndex,
 };
 use crate::csv::scanner::{parse_fields, record_end, serialize_fields, strip_bom};
+use crate::memory;
 use crate::recent;
 use serde::Serialize;
 use std::collections::{HashMap, VecDeque};
@@ -148,21 +149,8 @@ fn invalidate_all_sessions(reg: &mut CsvRegistry) {
         drop_session_memory(session);
     }
     reg.sessions.clear();
-    trim_process_heap();
+    memory::trim_process_heap();
 }
-
-#[cfg(target_os = "macos")]
-fn trim_process_heap() {
-    extern "C" {
-        fn malloc_zone_pressure_relief(zone: *mut std::ffi::c_void, goal: usize) -> usize;
-    }
-    unsafe {
-        malloc_zone_pressure_relief(std::ptr::null_mut(), 0);
-    }
-}
-
-#[cfg(not(target_os = "macos"))]
-fn trim_process_heap() {}
 
 fn cache_dir_for(app: &AppHandle) -> Result<PathBuf, String> {
     app.path()
@@ -530,10 +518,14 @@ pub fn csv_save(
     Ok(dest.to_string_lossy().into_owned())
 }
 
-pub fn csv_close(state: tauri::State<CsvState>) -> Result<(), String> {
+pub fn close_all_sessions(state: &CsvState) -> Result<(), String> {
     let mut reg = state.0.lock().map_err(|e| e.to_string())?;
     invalidate_all_sessions(&mut reg);
     Ok(())
+}
+
+pub fn csv_close(state: tauri::State<CsvState>) -> Result<(), String> {
+    close_all_sessions(&state)
 }
 
 fn session_row_count(session: &CsvSession) -> u64 {

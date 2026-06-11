@@ -3,7 +3,8 @@ import "./styles/json-editor.css";
 import "./styles/csv-editor.css";
 import { initActivityBar } from "./app/activity-bar";
 import { createAppChrome } from "./app/chrome";
-import { getEditorMode, onEditorModeChange, type EditorMode } from "./app/editor-mode";
+import { getEditorMode, onEditorModeChange, setEditorMode, type EditorMode } from "./app/editor-mode";
+import { initAppLifecycle } from "./app/lifecycle";
 import type { EditorController } from "./core/editor-controller";
 import { createCsvEditor } from "./features/csv/editor";
 import { createJsonEditor } from "./features/json/editor";
@@ -37,6 +38,23 @@ window.addEventListener("DOMContentLoaded", () => {
     host.clearError();
     controllers[mode].activate();
     controllers[mode].syncUi();
+  });
+
+  initAppLifecycle({
+    getControllers: () => controllers,
+    getActiveMode: () => activeMode,
+    switchMode: (mode) => {
+      if (mode === activeMode) return;
+      controllers[activeMode].persistScroll();
+      controllers[activeMode].deactivate();
+      activeMode = mode;
+      setEditorMode(mode);
+      host.clearError();
+      controllers[mode].activate();
+      controllers[mode].syncUi();
+    },
+    showError: (message) => host.showError(message),
+    clearError: () => host.clearError(),
   });
 
   for (const mode of ALL_MODES) {

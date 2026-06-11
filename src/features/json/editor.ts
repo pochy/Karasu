@@ -194,6 +194,23 @@ export function createJsonEditor(host: EditorHost): EditorController {
       btnTree.hidden = true;
     },
 
+    async suspend() {
+      if (path) persistScroll();
+      active = false;
+      screen.hidden = true;
+      btnFormat.hidden = true;
+      btnTree.hidden = true;
+      editor.value = "";
+      treeEl.replaceChildren();
+      content = "";
+      savedContent = "";
+      path = null;
+      savedSelection = null;
+      lastRenderedTreeContent = null;
+      host.clearError();
+      syncStatus();
+    },
+
     isDirty,
     getPath: () => path,
     getFileName: () => (path ? fileBaseName(path) : "未選択"),

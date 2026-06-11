@@ -1,8 +1,10 @@
 use crate::csv::{self, CsvOpenResult, CsvRowBatch, CsvState};
 use crate::dir::{self, DirEntry, FileKind};
 use crate::fonts;
+use crate::lifecycle;
 use crate::recent;
 use crate::search;
+use crate::tray;
 use crate::watch;
 use crate::workspace;
 use serde::Serialize;
@@ -108,6 +110,19 @@ pub fn list_directory(path: String, file_kind: Option<String>) -> Result<Vec<Dir
 #[tauri::command]
 pub fn get_workspace_root(app: AppHandle) -> Option<String> {
     workspace::load_workspace_root(&app)
+}
+
+#[tauri::command]
+pub fn suspend_app_resources(
+    app: AppHandle,
+    csv_state: tauri::State<CsvState>,
+) -> Result<(), String> {
+    lifecycle::suspend_app(&app, &csv_state)
+}
+
+#[tauri::command]
+pub fn refresh_tray_menu(app: AppHandle) {
+    tray::refresh_tray_menu(&app);
 }
 
 #[tauri::command]

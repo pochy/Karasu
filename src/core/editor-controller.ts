@@ -7,6 +7,8 @@ export interface EditorHost {
 export interface EditorController {
   activate(): void;
   deactivate(): void;
+  /** ウィンドウ非表示時: 開いているファイル・キャッシュをすべて破棄 */
+  suspend(): Promise<void>;
   isDirty(): boolean;
   getPath(): string | null;
   getFileName(): string;

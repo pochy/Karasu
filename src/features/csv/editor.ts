@@ -242,6 +242,18 @@ export function createCsvEditor(host: EditorHost): EditorController {
       }
     },
 
+    async suspend() {
+      active = false;
+      screen.hidden = true;
+      await releaseBackend();
+      path = null;
+      meta = null;
+      dirty = false;
+      updateMetaDisplay();
+      host.clearError();
+      syncStatus();
+    },
+
     isDirty: () => dirty,
     getPath: () => path,
     getFileName: () => (path ? fileBaseName(path) : "未選択"),

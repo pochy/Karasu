@@ -249,7 +249,7 @@ React は使わず **Vanilla** で `@tanstack/virtual-core` と `@tanstack/table
 
 ## メモリ管理と解放
 
-Karasu の性能方針（常駐メモリを抑える）に沿い、CSV でも **不要になったら明示的に解放** します。本節は **何がいつ解放されるか**、**Activity Monitor で RSS が下がらない理由**、**トラブルシュート** を詳述します。
+Karasu の性能方針（常駐メモリを抑える）に沿い、CSV でも **不要になったら明示的に解放** します。本節は **CSV セッション単位** の解放を詳述します。**ウィンドウを閉じてメニューバー常駐に入るとき** のアプリ全体の `suspend` は [`design-decisions.md` — G1](design-decisions.md#メニューバー常駐とリソース解放g1) を参照してください。
 
 ### 用語
 

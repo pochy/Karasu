@@ -205,6 +205,9 @@ export function createMarkdownEditor(host: EditorHost): EditorController {
       active = true;
       screen.hidden = false;
       btnToggleView.hidden = false;
+      if (sidebarControls?.getWorkspaceRoot() === null) {
+        void sidebarControls?.restoreFromDisk();
+      }
       syncEditorFromState();
       void sidebarControls?.highlightActiveFile();
       void sidebarControls?.refreshRecentList();
@@ -215,6 +218,24 @@ export function createMarkdownEditor(host: EditorHost): EditorController {
       persistScroll();
       screen.hidden = true;
       btnToggleView.hidden = true;
+    },
+
+    async suspend() {
+      if (path) persistScroll();
+      await invoke("set_workspace_watch", { enabled: false, path: null });
+      active = false;
+      screen.hidden = true;
+      btnToggleView.hidden = true;
+      editor.value = "";
+      preview.replaceChildren();
+      content = "";
+      savedContent = "";
+      path = null;
+      savedSelection = null;
+      lastRenderedPreviewContent = null;
+      invalidatePreviewCache();
+      await sidebarControls?.suspend();
+      syncStatus();
     },
 
     isDirty,
