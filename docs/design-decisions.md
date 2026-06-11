@@ -229,7 +229,7 @@ pub fn suspend_app(app: &AppHandle, csv: &CsvState) -> Result<(), String> {
 | ---- | ---- |
 | 左クリック | メニュー表示（`show_menu_on_left_click: true`）。**Click Up の直前に** `refresh_tray_menu` で最近リストを最新化 |
 | 左ダブルクリック | メニューを開かずウィンドウ表示 |
-| アイコン | `icon_as_template(true)` … macOS ライト/ダークメニューバー向け |
+| アイコン | `icon.png` を 22×22 カラーで専用生成、`icon_as_template(false)`。詳細は [tray-icon-macos.md](tray-icon-macos.md) |
 
 **ウィンドウ非表示中の作業フォルダ選択**  
 フロントの `@tauri-apps/plugin-dialog` ではなく **Rust 側 `tauri-plugin-dialog`** を使う。WebView を前面表示しなくてもフォルダ選択できる。

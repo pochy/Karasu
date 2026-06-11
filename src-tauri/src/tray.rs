@@ -1,5 +1,7 @@
 use crate::recent;
 use crate::workspace;
+use image::imageops::FilterType;
+use std::io;
 use std::sync::Mutex;
 use tauri::menu::{Menu, MenuItem, PredefinedMenuItem, Submenu};
 use tauri::tray::{MouseButton, MouseButtonState, TrayIcon, TrayIconBuilder, TrayIconEvent};
@@ -11,6 +13,8 @@ const ID_WORKSPACE: &str = "tray.open_workspace";
 const ID_QUIT: &str = "tray.quit";
 const ID_RECENT_PREFIX: &str = "tray.recent.";
 const ID_RECENT_EMPTY: &str = "tray.recent.empty";
+const TRAY_ICON_BYTES: &[u8] = include_bytes!("../icons/icon.png");
+const TRAY_ICON_SIZE: u32 = 22;
 
 pub struct TrayIconStore(pub Mutex<Option<TrayIcon>>);
 
@@ -34,6 +38,21 @@ fn show_main_window(app: &AppHandle) {
         let _ = window.show();
         let _ = window.set_focus();
     }
+}
+
+fn tray_icon_image() -> tauri::Result<tauri::image::Image<'static>> {
+    let decoded = image::load_from_memory(TRAY_ICON_BYTES)
+        .map_err(|e| io::Error::other(format!("failed to decode tray icon: {e}")))?;
+    let rgba = decoded
+        .resize_exact(TRAY_ICON_SIZE, TRAY_ICON_SIZE, FilterType::Lanczos3)
+        .to_rgba8()
+        .into_raw();
+
+    Ok(tauri::image::Image::new_owned(
+        rgba,
+        TRAY_ICON_SIZE,
+        TRAY_ICON_SIZE,
+    ))
 }
 
 pub fn build_tray_menu(app: &AppHandle) -> tauri::Result<Menu<Wry>> {
@@ -148,14 +167,11 @@ fn handle_menu_event(app: &AppHandle, id: &str) {
 
 pub fn setup_tray(app: &AppHandle) -> tauri::Result<()> {
     let menu = build_tray_menu(app)?;
-    let icon = app
-        .default_window_icon()
-        .expect("default window icon configured in tauri.conf.json")
-        .clone();
+    let icon = tray_icon_image()?;
 
     let tray = TrayIconBuilder::with_id("main-tray")
         .icon(icon)
-        .icon_as_template(true)
+        .icon_as_template(false)
         .tooltip("Karasu")
         .menu(&menu)
         .show_menu_on_left_click(true)
