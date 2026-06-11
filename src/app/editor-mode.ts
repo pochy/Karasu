@@ -1,10 +1,31 @@
-export type EditorMode = "markdown" | "json" | "csv";
+export type EditorMode =
+  | "markdown"
+  | "json"
+  | "csv"
+  | "yaml"
+  | "toml"
+  | "convert"
+  | "jwt"
+  | "devtools";
 
 const STORAGE_KEY = "karasu-editor-mode";
 
+const VALID_MODES: EditorMode[] = [
+  "markdown",
+  "json",
+  "csv",
+  "yaml",
+  "toml",
+  "convert",
+  "jwt",
+  "devtools",
+];
+
 function parseStoredMode(): EditorMode {
   const stored = localStorage.getItem(STORAGE_KEY);
-  if (stored === "json" || stored === "csv") return stored;
+  if (stored && VALID_MODES.includes(stored as EditorMode)) {
+    return stored as EditorMode;
+  }
   return "markdown";
 }
 

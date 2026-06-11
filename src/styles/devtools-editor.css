@@ -1,0 +1,140 @@
+#devtools-screen .devtools-toolbar {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--toolbar-bg);
+  flex-shrink: 0;
+}
+
+#devtools-screen .devtools-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 0.75rem 1rem 1.25rem;
+  display: grid;
+  gap: 1.25rem;
+}
+
+#devtools-screen .devtools-section {
+  display: grid;
+  gap: 0.5rem;
+}
+
+#devtools-screen .devtools-section-title {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+#devtools-screen .devtools-textarea {
+  width: 100%;
+  min-height: 4.5rem;
+  resize: vertical;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.6rem 0.75rem;
+  font-family: var(--editor-font-family);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  background: #fff;
+  color: #1a1a1a;
+}
+
+#devtools-screen .devtools-input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.5rem 0.65rem;
+  font-family: var(--editor-font-family);
+  font-size: 0.875rem;
+  background: #fff;
+  color: #1a1a1a;
+}
+
+#devtools-screen .devtools-pre {
+  margin: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #f8fafc;
+  font-family: var(--editor-font-family);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  min-height: 3rem;
+}
+
+#devtools-screen .devtools-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+#devtools-screen .devtools-url-build-grid {
+  display: grid;
+  gap: 0.5rem;
+}
+
+#devtools-screen .devtools-url-build-grid label {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.8125rem;
+  color: #525252;
+}
+
+#devtools-screen .devtools-regexp-row {
+  display: grid;
+  grid-template-columns: 1fr 5rem;
+  gap: 0.5rem;
+}
+
+#devtools-screen .devtools-diff-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+#devtools-screen .devtools-diff-grid label {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.8125rem;
+  color: #525252;
+}
+
+#devtools-screen .devtools-diff-out {
+  font-family: var(--editor-font-family);
+}
+
+#devtools-screen .devtools-color-swatch {
+  display: inline-block;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  vertical-align: middle;
+}
+
+@media (max-width: 720px) {
+  #devtools-screen .devtools-diff-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  #devtools-screen .devtools-textarea,
+  #devtools-screen .devtools-input {
+    background: #1f1f1f;
+    color: #e5e5e5;
+    border-color: #404040;
+  }
+
+  #devtools-screen .devtools-pre {
+    background: #171717;
+    border-color: #404040;
+    color: #e5e5e5;
+  }
+}

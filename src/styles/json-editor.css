@@ -1,3 +1,77 @@
+#json-screen .json-main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+#json-screen.json-screen--schema-open .json-main {
+  flex: 1.2;
+}
+
+#json-screen .json-schema-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 0.8;
+  min-height: 0;
+  border-top: 1px solid var(--border);
+  background: var(--toolbar-bg);
+}
+
+#json-screen .json-schema-panel[hidden] {
+  display: none;
+}
+
+#json-screen .json-schema-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.4rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+#json-screen .json-schema-title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #525252;
+}
+
+#json-screen .json-schema-input {
+  flex: 1;
+  min-height: 5rem;
+  resize: none;
+  border: none;
+  padding: 0.65rem 0.75rem;
+  font-family: var(--editor-font-family);
+  font-size: 0.875rem;
+  line-height: 1.5;
+  background: #fff;
+  color: #1a1a1a;
+}
+
+#json-screen .json-schema-result {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  min-height: 2.5rem;
+  max-height: 6rem;
+  overflow: auto;
+  font-family: var(--editor-font-family);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  border-top: 1px solid var(--border);
+  background: #f8fafc;
+  white-space: pre-wrap;
+}
+
+#json-screen .json-schema-result--ok {
+  color: #166534;
+}
+
+#json-screen .json-schema-result--error {
+  color: #991b1b;
+}
+
 #json-screen .json-tree {
   flex: 1;
   overflow: auto;
@@ -98,6 +172,7 @@
 
 #json-screen .json-editor {
   flex: 1;
+  min-height: 0;
   width: 100%;
   resize: none;
   border: none;

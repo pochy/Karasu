@@ -45,6 +45,30 @@
         </button>
         <button
           type="button"
+          id="btn-json-schema"
+          hidden
+          aria-label="JSON Schema 検証パネルを切り替え"
+        >
+          Schema
+        </button>
+        <button
+          type="button"
+          id="btn-yaml-format"
+          hidden
+          aria-label="YAML を整形"
+        >
+          整形
+        </button>
+        <button
+          type="button"
+          id="btn-toml-format"
+          hidden
+          aria-label="TOML を整形"
+        >
+          整形
+        </button>
+        <button
+          type="button"
           id="btn-settings"
           aria-haspopup="dialog"
         >
@@ -129,19 +153,219 @@
               ></article>
             </div>
             <div id="json-screen" class="editor-screen" hidden>
+              <div class="json-main">
+                <textarea
+                  id="json-editor"
+                  class="json-editor"
+                  aria-label="JSON エディタ"
+                  spellcheck="false"
+                  placeholder="ファイルを開くか、ここに JSON を入力してください"
+                ></textarea>
+                <div
+                  id="json-tree"
+                  class="json-tree"
+                  aria-label="JSON ツリー"
+                  hidden
+                ></div>
+              </div>
+              <div id="json-schema-panel" class="json-schema-panel" hidden>
+                <div class="json-schema-header">
+                  <span class="json-schema-title">JSON Schema</span>
+                  <button type="button" id="btn-json-schema-validate">検証</button>
+                </div>
+                <textarea
+                  id="json-schema-input"
+                  class="json-schema-input"
+                  aria-label="JSON Schema"
+                  spellcheck="false"
+                  placeholder='{ "type": "object", "properties": { ... } }'
+                ></textarea>
+                <pre id="json-schema-result" class="json-schema-result" aria-live="polite"></pre>
+              </div>
+            </div>
+            <div id="yaml-screen" class="editor-screen" hidden>
               <textarea
-                id="json-editor"
-                class="json-editor"
-                aria-label="JSON エディタ"
+                id="yaml-editor"
+                class="yaml-editor"
+                aria-label="YAML エディタ"
                 spellcheck="false"
-                placeholder="ファイルを開くか、ここに JSON を入力してください"
+                placeholder="ファイルを開くか、ここに YAML を入力してください"
               ></textarea>
-              <div
-                id="json-tree"
-                class="json-tree"
-                aria-label="JSON ツリー"
-                hidden
-              ></div>
+            </div>
+            <div id="toml-screen" class="editor-screen" hidden>
+              <textarea
+                id="toml-editor"
+                class="toml-editor"
+                aria-label="TOML エディタ"
+                spellcheck="false"
+                placeholder="ファイルを開くか、ここに TOML を入力してください"
+              ></textarea>
+            </div>
+            <div id="convert-screen" class="editor-screen" hidden>
+              <div class="convert-toolbar">
+                <button type="button" id="btn-convert-json-to-yaml">JSON → YAML</button>
+                <button type="button" id="btn-convert-yaml-to-json">YAML → JSON</button>
+                <button type="button" id="btn-convert-clear">クリア</button>
+              </div>
+              <div class="convert-panes">
+                <label class="convert-pane">
+                  <span class="convert-pane-label">JSON</span>
+                  <textarea
+                    id="convert-json"
+                    class="convert-editor"
+                    aria-label="JSON 入力"
+                    spellcheck="false"
+                    placeholder="JSON を入力"
+                  ></textarea>
+                </label>
+                <label class="convert-pane">
+                  <span class="convert-pane-label">YAML</span>
+                  <textarea
+                    id="convert-yaml"
+                    class="convert-editor"
+                    aria-label="YAML 入力"
+                    spellcheck="false"
+                    placeholder="YAML を入力"
+                  ></textarea>
+                </label>
+              </div>
+            </div>
+            <div id="jwt-screen" class="editor-screen" hidden>
+              <div class="jwt-toolbar">
+                <button type="button" id="btn-jwt-decode">デコード</button>
+                <button type="button" id="btn-jwt-clear">クリア</button>
+              </div>
+              <label class="jwt-field">
+                <span class="jwt-field-label">JWT トークン</span>
+                <textarea
+                  id="jwt-token"
+                  class="jwt-token"
+                  aria-label="JWT トークン"
+                  spellcheck="false"
+                  placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                ></textarea>
+              </label>
+              <p class="jwt-note">署名検証は行いません。ローカルで header / payload を確認する用途のみです。</p>
+              <div class="jwt-results">
+                <section class="jwt-result-block">
+                  <h3 class="jwt-result-title">Header</h3>
+                  <pre id="jwt-header" class="jwt-result-pre"></pre>
+                </section>
+                <section class="jwt-result-block">
+                  <h3 class="jwt-result-title">Payload</h3>
+                  <pre id="jwt-payload" class="jwt-result-pre"></pre>
+                </section>
+                <p id="jwt-expiry" class="jwt-expiry" aria-live="polite"></p>
+              </div>
+            </div>
+            <div id="devtools-screen" class="editor-screen" hidden>
+              <div class="devtools-toolbar">
+                <button type="button" id="btn-devtools-clear">すべてクリア</button>
+              </div>
+              <div class="devtools-scroll">
+                <section class="devtools-section">
+                  <h3 class="devtools-section-title">Base64</h3>
+                  <textarea id="devtools-base64-in" class="devtools-textarea" aria-label="Base64 入力" spellcheck="false"></textarea>
+                  <div class="devtools-actions">
+                    <button type="button" id="btn-base64-encode">エンコード</button>
+                    <button type="button" id="btn-base64-decode">デコード</button>
+                  </div>
+                  <textarea id="devtools-base64-out" class="devtools-textarea" aria-label="Base64 出力" readonly spellcheck="false"></textarea>
+                </section>
+                <section class="devtools-section">
+                  <h3 class="devtools-section-title">URL Encode / Decode</h3>
+                  <textarea id="devtools-url-enc-in" class="devtools-textarea" aria-label="URL エンコード入力" spellcheck="false"></textarea>
+                  <div class="devtools-actions">
+                    <button type="button" id="btn-url-encode">エンコード</button>
+                    <button type="button" id="btn-url-decode">デコード</button>
+                  </div>
+                  <textarea id="devtools-url-enc-out" class="devtools-textarea" aria-label="URL エンコード出力" readonly spellcheck="false"></textarea>
+                </section>
+                <section class="devtools-section">
+                  <h3 class="devtools-section-title">Hash</h3>
+                  <textarea id="devtools-hash-in" class="devtools-textarea" aria-label="ハッシュ入力" spellcheck="false"></textarea>
+                  <div class="devtools-actions">
+                    <select id="devtools-hash-algo" aria-label="ハッシュアルゴリズム">
+                      <option value="SHA-256">SHA-256</option>
+                      <option value="SHA-512">SHA-512</option>
+                      <option value="SHA-1">SHA-1</option>
+                    </select>
+                    <button type="button" id="btn-hash">計算</button>
+                  </div>
+                  <textarea id="devtools-hash-out" class="devtools-textarea" aria-label="ハッシュ出力" readonly spellcheck="false"></textarea>
+                </section>
+                <section class="devtools-section">
+                  <h3 class="devtools-section-title">UUID</h3>
+                  <div class="devtools-actions">
+                    <button type="button" id="btn-uuid">生成</button>
+                    <button type="button" id="btn-uuid-copy">コピー</button>
+                  </div>
+                  <input id="devtools-uuid-out" class="devtools-input" type="text" readonly aria-label="生成された UUID" />
+                </section>
+                <section class="devtools-section">
+                  <h3 class="devtools-section-title">URL Parser</h3>
+                  <input id="devtools-url-parse-in" class="devtools-input" type="url" placeholder="https://example.com/path?a=1" aria-label="解析する URL" />
+                  <div class="devtools-actions">
+                    <button type="button" id="btn-url-parse">解析</button>
+                  </div>
+                  <pre id="devtools-url-parse-out" class="devtools-pre"></pre>
+                </section>
+                <section class="devtools-section">
+                  <h3 class="devtools-section-title">RegExp テスター</h3>
+                  <div class="devtools-regexp-row">
+                    <input id="devtools-regexp-pattern" class="devtools-input" type="text" placeholder="パターン" aria-label="正規表現パターン" />
+                    <input id="devtools-regexp-flags" class="devtools-input devtools-regexp-flags" type="text" value="g" placeholder="flags" aria-label="正規表現フラグ" />
+                  </div>
+                  <textarea id="devtools-regexp-text" class="devtools-textarea" aria-label="テスト文字列" spellcheck="false"></textarea>
+                  <div class="devtools-actions">
+                    <button type="button" id="btn-regexp-test">テスト</button>
+                  </div>
+                  <pre id="devtools-regexp-out" class="devtools-pre"></pre>
+                </section>
+                <section class="devtools-section">
+                  <h3 class="devtools-section-title">Unix タイムスタンプ</h3>
+                  <input id="devtools-timestamp-in" class="devtools-input" type="text" placeholder="1700000000 または 2024-01-01T00:00:00Z" aria-label="タイムスタンプ入力" />
+                  <div class="devtools-actions">
+                    <button type="button" id="btn-timestamp-convert">変換</button>
+                  </div>
+                  <pre id="devtools-timestamp-out" class="devtools-pre"></pre>
+                </section>
+                <section class="devtools-section">
+                  <h3 class="devtools-section-title">テキスト Diff</h3>
+                  <div class="devtools-diff-grid">
+                    <label>左（旧）<textarea id="devtools-diff-left" class="devtools-textarea" aria-label="Diff 左テキスト" spellcheck="false"></textarea></label>
+                    <label>右（新）<textarea id="devtools-diff-right" class="devtools-textarea" aria-label="Diff 右テキスト" spellcheck="false"></textarea></label>
+                  </div>
+                  <div class="devtools-actions">
+                    <button type="button" id="btn-diff">比較</button>
+                  </div>
+                  <pre id="devtools-diff-out" class="devtools-pre devtools-diff-out"></pre>
+                </section>
+                <section class="devtools-section">
+                  <h3 class="devtools-section-title">カラーコード変換</h3>
+                  <input id="devtools-color-in" class="devtools-input" type="text" placeholder="#2563eb または rgb(37, 99, 235)" aria-label="カラーコード入力" />
+                  <div class="devtools-actions">
+                    <button type="button" id="btn-color-convert">変換</button>
+                    <span id="devtools-color-swatch" class="devtools-color-swatch" aria-hidden="true"></span>
+                  </div>
+                  <pre id="devtools-color-out" class="devtools-pre"></pre>
+                </section>
+                <section class="devtools-section">
+                  <h3 class="devtools-section-title">URL Creator</h3>
+                  <div class="devtools-url-build-grid">
+                    <label>Protocol <input id="devtools-url-protocol" class="devtools-input" type="text" value="https:" /></label>
+                    <label>Host <input id="devtools-url-host" class="devtools-input" type="text" placeholder="example.com" /></label>
+                    <label>Path <input id="devtools-url-path" class="devtools-input" type="text" value="/" /></label>
+                    <label>Search <input id="devtools-url-search" class="devtools-input" type="text" placeholder="a=1&amp;b=2" /></label>
+                    <label>Hash <input id="devtools-url-hash" class="devtools-input" type="text" placeholder="section" /></label>
+                  </div>
+                  <div class="devtools-actions">
+                    <button type="button" id="btn-url-build">作成</button>
+                    <button type="button" id="btn-url-build-copy">コピー</button>
+                  </div>
+                  <input id="devtools-url-build-out" class="devtools-input" type="text" readonly aria-label="作成された URL" />
+                </section>
+              </div>
             </div>
             <div id="csv-screen" class="editor-screen" hidden>
               <div class="csv-toolbar">

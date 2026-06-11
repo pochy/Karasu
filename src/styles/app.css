@@ -58,6 +58,8 @@ body {
   padding: 0.5rem 0.25rem;
   border-right: 1px solid var(--border);
   background: var(--toolbar-bg);
+  overflow-y: auto;
+  min-height: 0;
 }
 
 .activity-bar-btn {

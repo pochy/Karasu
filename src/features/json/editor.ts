@@ -1,6 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import { open, save } from "@tauri-apps/plugin-dialog";
 import type { EditorController, EditorHost } from "../../core/editor-controller";
+import { validateJsonAgainstSchema } from "../../core/json-schema";
 import { renderJsonTree } from "./tree-view";
 import {
   restoreScrollPosition,
@@ -42,11 +43,20 @@ export function createJsonEditor(host: EditorHost): EditorController {
   const treeEl = document.querySelector("#json-tree") as HTMLElement;
   const btnFormat = document.querySelector("#btn-json-format") as HTMLButtonElement;
   const btnTree = document.querySelector("#btn-json-tree") as HTMLButtonElement;
+  const btnSchema = document.querySelector("#btn-json-schema") as HTMLButtonElement;
+  const schemaPanel = document.querySelector("#json-schema-panel") as HTMLElement;
+  const schemaInput = document.querySelector("#json-schema-input") as HTMLTextAreaElement;
+  const schemaResult = document.querySelector("#json-schema-result") as HTMLPreElement;
+  const btnSchemaValidate = document.querySelector(
+    "#btn-json-schema-validate",
+  ) as HTMLButtonElement;
 
   let path: string | null = null;
   let content = "";
   let savedContent = "";
+  let schemaContent = "";
   let view: JsonViewMode = "edit";
+  let schemaPanelOpen = false;
   let lastRenderedTreeContent: string | null = null;
   let savedSelection: { start: number; end: number } | null = null;
   let active = false;
@@ -162,6 +172,33 @@ export function createJsonEditor(host: EditorHost): EditorController {
     applyView();
   }
 
+  function applySchemaPanel() {
+    schemaPanel.hidden = !schemaPanelOpen;
+    screen.classList.toggle("json-screen--schema-open", schemaPanelOpen);
+    btnSchema.setAttribute("aria-pressed", String(schemaPanelOpen));
+  }
+
+  function toggleSchemaPanel() {
+    schemaPanelOpen = !schemaPanelOpen;
+    applySchemaPanel();
+  }
+
+  async function runSchemaValidation() {
+    schemaContent = schemaInput.value;
+    const result = await validateJsonAgainstSchema(content, schemaContent);
+    if (result.valid) {
+      schemaResult.textContent = "✓ Schema に適合しています";
+      schemaResult.classList.remove("json-schema-result--error");
+      schemaResult.classList.add("json-schema-result--ok");
+      host.clearError();
+      return;
+    }
+    schemaResult.textContent = result.errors ?? "検証に失敗しました";
+    schemaResult.classList.remove("json-schema-result--ok");
+    schemaResult.classList.add("json-schema-result--error");
+    host.showError("JSON Schema 検証エラー");
+  }
+
   editor.addEventListener("input", () => {
     content = editor.value;
     lastRenderedTreeContent = null;
@@ -176,13 +213,17 @@ export function createJsonEditor(host: EditorHost): EditorController {
 
   btnFormat.addEventListener("click", formatJson);
   btnTree.addEventListener("click", toggleView);
+  btnSchema.addEventListener("click", toggleSchemaPanel);
+  btnSchemaValidate.addEventListener("click", () => void runSchemaValidation());
+  schemaInput.addEventListener("input", () => {
+    schemaContent = schemaInput.value;
+  });
 
   return {
     activate() {
       active = true;
       screen.hidden = false;
-      btnFormat.hidden = false;
-      btnTree.hidden = false;
+      applySchemaPanel();
       syncEditorFromState();
     },
 
@@ -190,20 +231,22 @@ export function createJsonEditor(host: EditorHost): EditorController {
       active = false;
       persistScroll();
       screen.hidden = true;
-      btnFormat.hidden = true;
-      btnTree.hidden = true;
     },
 
     async suspend() {
       if (path) persistScroll();
       active = false;
       screen.hidden = true;
-      btnFormat.hidden = true;
-      btnTree.hidden = true;
       editor.value = "";
       treeEl.replaceChildren();
       content = "";
       savedContent = "";
+      schemaContent = "";
+      schemaInput.value = "";
+      schemaResult.textContent = "";
+      schemaResult.classList.remove("json-schema-result--ok", "json-schema-result--error");
+      schemaPanelOpen = false;
+      applySchemaPanel();
       path = null;
       savedSelection = null;
       lastRenderedTreeContent = null;
@@ -301,6 +344,10 @@ export function createJsonEditor(host: EditorHost): EditorController {
       }
       if (key === "p") {
         toggleView();
+        return true;
+      }
+      if (key === "b") {
+        toggleSchemaPanel();
         return true;
       }
       return false;

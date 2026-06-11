@@ -39,12 +39,9 @@ export function createAppChrome(getActive: () => EditorController): EditorHost {
       saveStatusEl.classList.toggle("save-status--saved", !dirty);
 
       const appWindow = getCurrentWebviewWindow();
-      if (!path) {
-        void appWindow.setTitle("Karasu");
-        return;
-      }
       const prefix = dirty ? "• " : "";
-      void appWindow.setTitle(`${prefix}${fileBaseName(path)} - Karasu`);
+      const titleName = path ? fileBaseName(path) : fileName;
+      void appWindow.setTitle(`${prefix}${titleName} - Karasu`);
     },
   };
 

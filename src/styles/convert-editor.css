@@ -1,0 +1,81 @@
+#convert-screen .convert-toolbar {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--toolbar-bg);
+  flex-shrink: 0;
+}
+
+#convert-screen .convert-panes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  flex: 1;
+  min-height: 0;
+}
+
+#convert-screen .convert-pane {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border-right: 1px solid var(--border);
+}
+
+#convert-screen .convert-pane:last-child {
+  border-right: none;
+}
+
+#convert-screen .convert-pane-label {
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #525252;
+  background: var(--toolbar-bg);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+#convert-screen .convert-editor {
+  flex: 1;
+  width: 100%;
+  resize: none;
+  border: none;
+  padding: 0.75rem 1rem;
+  font-family: var(--editor-font-family);
+  font-size: var(--editor-font-size);
+  line-height: 1.6;
+  background: #fff;
+  color: #1a1a1a;
+}
+
+#convert-screen .convert-editor:focus {
+  outline: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  #convert-screen .convert-editor {
+    background: #1f1f1f;
+    color: #e5e5e5;
+  }
+}
+
+:root.editor-light #convert-screen .convert-editor {
+  background: #ffffff;
+  color: #1a1a1a;
+}
+
+@media (max-width: 720px) {
+  #convert-screen .convert-panes {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+
+  #convert-screen .convert-pane {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  #convert-screen .convert-pane:last-child {
+    border-bottom: none;
+  }
+}

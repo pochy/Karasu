@@ -9,7 +9,16 @@ import {
 import type { EditorController } from "../core/editor-controller";
 import { editorModeForPath } from "../core/file-kind";
 
-const ALL_MODES: EditorMode[] = ["markdown", "json", "csv"];
+const ALL_MODES: EditorMode[] = [
+  "markdown",
+  "json",
+  "csv",
+  "yaml",
+  "toml",
+  "convert",
+  "jwt",
+  "devtools",
+];
 
 export interface LifecycleDeps {
   getControllers(): Record<EditorMode, EditorController>;
