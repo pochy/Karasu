@@ -1,0 +1,134 @@
+#csv-screen {
+  background: #fff;
+  color: #1a1a1a;
+}
+
+#csv-screen .csv-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.35rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  background: #f8fafc;
+  flex-shrink: 0;
+  font-size: 0.8125rem;
+  color: #525252;
+}
+
+#csv-screen #csv-meta {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#csv-screen #btn-csv-close {
+  flex-shrink: 0;
+  padding: 0.25rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: #fff;
+  color: #525252;
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+#csv-screen #btn-csv-close:hover:not(:disabled) {
+  background: #f1f5f9;
+  color: #1a1a1a;
+}
+
+#csv-screen #btn-csv-close:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+#csv-screen #btn-csv-close:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+#csv-screen .csv-index-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+  background: #fffbeb;
+  flex-shrink: 0;
+  font-size: 0.8125rem;
+}
+
+#csv-screen .csv-index-progress progress {
+  flex: 1;
+  max-width: 12rem;
+}
+
+#csv-screen .csv-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  position: relative;
+}
+
+#csv-screen .csv-table-inner {
+  position: relative;
+  width: max-content;
+  min-width: 100%;
+}
+
+#csv-screen .csv-table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: max-content;
+  min-width: 100%;
+  font-size: 0.8125rem;
+}
+
+#csv-screen .csv-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #f1f5f9;
+}
+
+#csv-screen .csv-table th,
+#csv-screen .csv-table td {
+  border: 1px solid #e2e8f0;
+  padding: 0.25rem 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 28px;
+  max-height: 28px;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
+#csv-screen .csv-table th {
+  font-weight: 600;
+  text-align: left;
+  color: #334155;
+}
+
+#csv-screen .csv-table tbody tr {
+  background: #fff;
+}
+
+#csv-screen .csv-table tbody tr:hover td {
+  background: #f8fafc;
+}
+
+#csv-screen .csv-cell-input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  margin: 0;
+  padding: 0.125rem 0.25rem;
+  font: inherit;
+  background: #fff;
+  color: inherit;
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}

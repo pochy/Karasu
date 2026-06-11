@@ -1,9 +1,14 @@
-export type EditorMode = "markdown" | "json";
+export type EditorMode = "markdown" | "json" | "csv";
 
 const STORAGE_KEY = "karasu-editor-mode";
 
-let mode: EditorMode =
-  localStorage.getItem(STORAGE_KEY) === "json" ? "json" : "markdown";
+function parseStoredMode(): EditorMode {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (stored === "json" || stored === "csv") return stored;
+  return "markdown";
+}
+
+let mode: EditorMode = parseStoredMode();
 const listeners: Array<(mode: EditorMode) => void> = [];
 
 export function getEditorMode(): EditorMode {

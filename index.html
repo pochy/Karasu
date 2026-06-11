@@ -143,6 +143,31 @@
                 hidden
               ></div>
             </div>
+            <div id="csv-screen" class="editor-screen" hidden>
+              <div class="csv-toolbar">
+                <span id="csv-meta" aria-live="polite"></span>
+                <button
+                  type="button"
+                  id="btn-csv-close"
+                  disabled
+                  aria-label="開いている CSV を閉じてメモリを解放"
+                >
+                  解放
+                </button>
+              </div>
+              <div id="csv-index-progress" class="csv-index-progress" hidden>
+                <progress id="csv-index-progress-bar"></progress>
+                <span id="csv-index-progress-label"></span>
+              </div>
+              <div id="csv-scroll" class="csv-scroll" aria-label="CSV スプレッドシート">
+                <div id="csv-table-inner" class="csv-table-inner">
+                  <table id="csv-table" class="csv-table">
+                    <thead id="csv-thead"></thead>
+                    <tbody id="csv-tbody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
           </main>
 
           <footer class="statusbar" aria-live="polite">

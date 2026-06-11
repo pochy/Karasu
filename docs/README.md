@@ -5,6 +5,7 @@
 | 読者の目的 | おすすめの順番 |
 |------------|----------------|
 | なぜこう実装したか知りたい | [design-decisions.md](design-decisions.md) |
+| **CSV スプレッドシートの詳細** | **[csv-spreadsheet.md](csv-spreadsheet.md)** |
 | 今後の機能案・性能・難度の一覧 | [design-decisions.md#機能バックログ提案一覧](design-decisions.md#機能バックログ提案一覧) |
 | 初期の要件・スコープ | [superpowers/specs/2026-06-03-tauri-markdown-viewer-design.md](superpowers/specs/2026-06-03-tauri-markdown-viewer-design.md) |
 | コードハイライトだけ | [syntax-highlighting.md](syntax-highlighting.md) |

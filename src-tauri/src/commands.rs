@@ -1,3 +1,4 @@
+use crate::csv::{self, CsvOpenResult, CsvRowBatch, CsvState};
 use crate::dir::{self, DirEntry, FileKind};
 use crate::fonts;
 use crate::recent;
@@ -107,6 +108,47 @@ pub fn list_directory(path: String, file_kind: Option<String>) -> Result<Vec<Dir
 #[tauri::command]
 pub fn get_workspace_root(app: AppHandle) -> Option<String> {
     workspace::load_workspace_root(&app)
+}
+
+#[tauri::command]
+pub fn csv_open(app: AppHandle, state: tauri::State<CsvState>, path: String) -> Result<CsvOpenResult, String> {
+    csv::csv_open(app, state, path)
+}
+
+#[tauri::command]
+pub fn csv_read_rows(
+    state: tauri::State<CsvState>,
+    path: String,
+    start_row: u64,
+    count: u32,
+) -> Result<CsvRowBatch, String> {
+    csv::csv_read_rows(state, path, start_row, count)
+}
+
+#[tauri::command]
+pub fn csv_set_cell(
+    state: tauri::State<CsvState>,
+    path: String,
+    row: u64,
+    col: u32,
+    value: String,
+) -> Result<(), String> {
+    csv::csv_set_cell(state, path, row, col, value)
+}
+
+#[tauri::command]
+pub fn csv_save(
+    app: AppHandle,
+    state: tauri::State<CsvState>,
+    path: String,
+    output_path: Option<String>,
+) -> Result<String, String> {
+    csv::csv_save(app, state, path, output_path)
+}
+
+#[tauri::command]
+pub fn csv_close(state: tauri::State<CsvState>) -> Result<(), String> {
+    csv::csv_close(state)
 }
 
 #[tauri::command]
